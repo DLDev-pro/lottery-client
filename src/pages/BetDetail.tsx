@@ -90,7 +90,7 @@ const BetDetail = () => {
         region_unique_key: region,
         bets: transferBet(provinces, content),
       }
-      if (bet_id) {
+      if (bet_id && bet_id !== '-1') {
         data = {
           ...data,
           bet_id: Number(bet_id),
@@ -136,7 +136,16 @@ const BetDetail = () => {
       })
       const { data } = response
       if (data && data.data !== null) {
-        setBet(data.data)
+        if (Array.isArray(response.data.data)) {
+          setBet({
+            bets: [],
+            province_acronym: response.data.data,
+            statistic: [],
+            win: [],
+          })
+        } else {
+          setBet(data.data)
+        }
       } else {
         setBet(null)
       }
@@ -176,7 +185,7 @@ const BetDetail = () => {
 
   const [content, setContent] = useState('')
   useEffect(() => {
-    if (bet) {
+    if (bet && bet.bets.length > 0) {
       if (tab.key === 1) {
         setContent(bet?.bets[0].bets.map((item) => item).join('\n'))
       } else if (tab.key === 2) {
@@ -250,17 +259,6 @@ const BetDetail = () => {
         })}
       </p>
 
-      {/* {!location.pathname.includes(`${ID_NEGATIVE}`) && (
-        <div className="flex justify-between items-center px-2 text-white bg-main">
-          <span>Chi tiết</span>
-          <span
-            onClick={() => setShowDetail(!showDetail)}
-            className="cursor-pointer text-2xl font-bold"
-          >
-            {!showDetail ? <IoIosArrowDown /> : <IoIosArrowUp />}
-          </span>
-        </div>
-      )} */}
       {showDetail && (
         <div className="space-x-1">
           {bet?.win.map((item) => {

@@ -79,7 +79,17 @@ const Result = () => {
           setData(null)
         } else {
           if (search) {
-            setData(response.data.data)
+            if (Array.isArray(response.data.data)) {
+              setData({
+                bets: [],
+                province_acronym: response.data.data,
+                statistic: [],
+                win: [],
+              })
+              setIsNew(true)
+            } else {
+              setData(response.data.data)
+            }
             const responseAgency = await agencyApi.GetAgency(
               search.split('=')[1]
             )
@@ -303,10 +313,10 @@ const Result = () => {
               </>
             )
           })}
-        {data && agency && (
+        {data?.bets.length! > 0 && agency && (
           <BetDetailComp
             agency={agency}
-            item={data}
+            item={data!}
             index={0}
             pointRaw={pointRaw}
             pointMiddle={pointMiddle}
