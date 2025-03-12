@@ -1,0 +1,5 @@
+export * as authApi from './auth'
+export * as betApi from './bet'
+export * as agencyApi from './agency'
+export * as globalApi from './global'
+export * as settingApi from './setting'
