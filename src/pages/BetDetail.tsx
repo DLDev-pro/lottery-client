@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { betApi } from '@/apis'
+import { betApi, globalApi } from '@/apis'
 import BetDetailComp from '@/components/bet/BetDetail'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
@@ -8,6 +8,7 @@ import { SettingContext } from '@/contexts/SettingContext'
 import { PATHS } from '@/utils/constants'
 import {
   IBetResultDetailInner,
+  IRule,
   IRuleAcronym,
   IStatistic,
 } from '@/utils/interface'
@@ -21,7 +22,6 @@ import { DateContextType, SettingContextType } from '@/utils/types'
 import { useContext, useEffect, useState } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { IoMdSave } from 'react-icons/io'
-import { PiListBold } from 'react-icons/pi'
 import { useLocation } from 'react-router-dom'
 
 const tabs = [
@@ -63,7 +63,27 @@ const BetDetail = () => {
   const [provinceError, setProvinceError] = useState<string[]>([])
   const [region, setRegion] = useState('')
 
-  //   {
+  const [rulesGlobal, setRulesGlobal] = useState<IRule[]>([])
+
+  const getRules = async () => {
+    try {
+      const response = await globalApi.GetAllRule()
+      if (response) {
+        const { data } = response
+        if (data.data) {
+          setRulesGlobal(response.data.data)
+        } else {
+          setRulesGlobal([])
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getRules()
+  }, [])
 
   const handleAddBet = async () => {
     try {
@@ -86,10 +106,11 @@ const BetDetail = () => {
         bet_id?: number
       } = {
         agency_id: Number(agency_id),
-        open_date: date.toISOString().split('T')[0],
+        open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key: region,
         bets: transferBet(provinces, content),
       }
+
       if (bet_id && bet_id !== '-1') {
         data = {
           ...data,
@@ -104,6 +125,7 @@ const BetDetail = () => {
             title: 'Thêm dữ liệu thành công',
             variant: 'success',
           })
+          window.location.reload()
         }
       }
     } catch (error) {
@@ -129,8 +151,9 @@ const BetDetail = () => {
       if (region_unique_key === '') {
         return
       }
+
       const response = await betApi.GetBets({
-        open_date: date.toISOString().split('T')[0],
+        open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key,
         agency_id: location.search.split('=')[1],
       })
@@ -155,7 +178,7 @@ const BetDetail = () => {
   }
 
   useEffect(() => {
-    if (location.search.split('=')[1]) {
+    if (location.search.split('=')[1] && date) {
       getBet()
     }
   }, [date])
@@ -172,7 +195,7 @@ const BetDetail = () => {
     if (bet) {
       const statisticRaw = bet?.statistic || []
       const flattenedRaw = statisticRaw.flat()
-      const statisticFilled = calculateStatistic(rules, flattenedRaw)
+      const statisticFilled = calculateStatistic(rulesGlobal, flattenedRaw)
       setPointRaw(statisticFilled)
       setPointMiddle(emptyStatistics)
       setPointMatched(emptyStatistics)
@@ -275,13 +298,16 @@ const BetDetail = () => {
       )}
       <BetDetailComp
         item={bet!}
-        index={-1}
+        index={0}
         pointRaw={pointRaw}
         pointMatched={pointMatched}
         pointMiddle={pointMiddle}
       />
       <div className="flex justify-between items-center">
-        <Button className="hover:bg-[#d58512] bg-[#f0ad4e] rounded-3xl py-1 h-fit">
+        <Button
+          onClick={() => setContent('')}
+          className="hover:bg-[#d58512] bg-[#f0ad4e] rounded-3xl py-1 h-fit"
+        >
           <FaRegTrashAlt />
           Xóa mất
         </Button>
@@ -293,10 +319,10 @@ const BetDetail = () => {
             <IoMdSave />
             Cập nhật
           </Button>
-          <Button className="bg-[#1A82C3] rounded-3xl py-1 h-fit">
+          {/* <Button className="bg-[#1A82C3] rounded-3xl py-1 h-fit">
             <PiListBold />
             D.sách
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

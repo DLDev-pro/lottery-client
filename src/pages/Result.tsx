@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { agencyApi, betApi } from '@/apis'
+import { agencyApi, betApi, globalApi } from '@/apis'
 import BetDetailComp from '@/components/bet/BetDetail'
 import { Button } from '@/components/ui/button'
 import { DateContext } from '@/contexts/DateContext'
@@ -11,6 +11,8 @@ import {
   IAgency,
   IBetResultDetail,
   IBetResultDetailInner,
+  IBetStatistic,
+  IRule,
   IStatistic,
 } from '@/utils/interface'
 import {
@@ -35,15 +37,31 @@ const Result = () => {
   const navigate = useNavigate()
   const { region } = useContext(RegionContext) as RegionContextType
   const { date } = useContext(DateContext) as DateContextType
-  const { search } = useLocation()
+  const { search, pathname } = useLocation()
   const [isNew, setIsNew] = React.useState(false)
 
-  const { rules } = useContext(SettingContext) as SettingContextType
   const [pointRaw, setPointRaw] = React.useState<IStatistic[]>([])
   const [pointMiddle, setPointMiddle] = React.useState<IStatistic[]>([])
   const [pointMatched, setPointMatched] = React.useState<IStatistic[]>([])
   const [agency, setAgency] = React.useState<IAgency | null>(null)
   const [agency_id, setAgency_id] = React.useState<string>('')
+  const [rules, setRules] = React.useState<IRule[]>([])
+
+  const getRules = async () => {
+    try {
+      const response = await globalApi.GetAllRule()
+      if (response) {
+        const { data } = response
+        if (data.data) {
+          setRules(response.data.data)
+        } else {
+          setRules([])
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getData = async () => {
     try {
       let agency_id
@@ -59,9 +77,11 @@ const Result = () => {
       } else if (pathname === PATHS.MIEN_NAM) {
         region_unique_key = 'south'
       }
-
+      if (!date) {
+        return
+      }
       const response = await betApi.GetBets({
-        open_date: date.toISOString().split('T')[0],
+        open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key: region_unique_key,
         agency_id,
       })
@@ -72,6 +92,7 @@ const Result = () => {
           response.data === null ||
           data === null ||
           (data !== null &&
+            Array.isArray(response.data.data) &&
             data.every((item: IBetResultDetail) => item.bet_detail === null))
         ) {
           setIsNew(true)
@@ -108,24 +129,34 @@ const Result = () => {
       console.log(error)
     }
   }
-  const { pathname } = useLocation()
+
+  useEffect(() => {
+    getRules()
+  }, [])
 
   useEffect(() => {
     getData()
   }, [date])
-  // Helper function to create a blank IStatistic list
 
-  // Helper function to fill statisticRaw -> IStatistic[]
-
-  // First useEffect (datas)
   useEffect(() => {
-    const statisticRaw = (datas || []).flatMap((item) =>
-      (item.bet_detail || []).map((detail) => detail.statistic)
+    if (datas.length === 0) {
+      return
+    }
+    const statisticRaw = (datas || []).flatMap((item) => {
+      if (!item.bet_detail) {
+        return []
+      }
+      return (item.bet_detail || []).flatMap((detail) => {
+        return detail.statistic ? detail.statistic : []
+      })
+    })
+
+    const flattenedRaw = statisticRaw.filter((val) => val !== undefined).flat()
+
+    const statisticFilled = calculateStatistic(
+      rules,
+      flattenedRaw as unknown as IBetStatistic[]
     )
-
-    const flattenedRaw = statisticRaw.flat()
-
-    const statisticFilled = calculateStatistic(rules, flattenedRaw)
     setPointRaw(statisticFilled)
 
     const emptyStatistics = createEmptyStatistic(rules)
@@ -138,18 +169,6 @@ const Result = () => {
     const flattenedRaw = statisticRaw.flat()
     const statisticFilled = calculateStatistic(rules, flattenedRaw)
     setPointRaw(statisticFilled)
-    const emptyStatistics = createEmptyStatistic(rules)
-    setPointMiddle(emptyStatistics)
-    setPointMatched(emptyStatistics)
-  }, [data, rules])
-
-  // Second useEffect (data)
-  useEffect(() => {
-    const statisticRaw = data?.statistic || []
-
-    const statisticFilled = calculateStatistic(rules, statisticRaw)
-    setPointRaw(statisticFilled)
-
     const emptyStatistics = createEmptyStatistic(rules)
     setPointMiddle(emptyStatistics)
     setPointMatched(emptyStatistics)
@@ -284,35 +303,36 @@ const Result = () => {
         {finalResult >= 0 ? 'Lỗ' : 'Lời'})
       </p>
       <div>
-        {datas
-          .filter((item) => item.bet_detail !== null)
-          .map((item) => {
-            return (
-              <>
-                {item.bet_detail.map((item2, index2) => {
-                  const statisticRaw = item2?.statistic || []
-                  const flattenedRaw = statisticRaw.flat()
-                  const statisticFilled = calculateStatistic(
-                    rules,
-                    flattenedRaw
-                  )
-                  const emptyStatistics = createEmptyStatistic(rules)
-                  return (
-                    <div key={index2}>
-                      <BetDetailComp
-                        agency={item.agency}
-                        item={item2}
-                        index={index2}
-                        pointRaw={statisticFilled}
-                        pointMiddle={emptyStatistics}
-                        pointMatched={emptyStatistics}
-                      />
-                    </div>
-                  )
-                })}
-              </>
-            )
-          })}
+        {datas.length > 0 &&
+          datas
+            .filter((item) => item.bet_detail !== null)
+            .map((item, outerIndex) => {
+              return (
+                <React.Fragment key={outerIndex}>
+                  {item.bet_detail.map((item2, innerIndex) => {
+                    const statisticRaw = item2?.statistic || []
+                    const flattenedRaw = statisticRaw.flat()
+                    const statisticFilled = calculateStatistic(
+                      rules,
+                      flattenedRaw
+                    )
+                    const emptyStatistics = createEmptyStatistic(rules)
+                    return (
+                      <div key={`${outerIndex}-${innerIndex}`}>
+                        <BetDetailComp
+                          agency={item.agency}
+                          item={item2}
+                          index={innerIndex}
+                          pointRaw={statisticFilled}
+                          pointMiddle={emptyStatistics}
+                          pointMatched={emptyStatistics}
+                        />
+                      </div>
+                    )
+                  })}
+                </React.Fragment>
+              )
+            })}
         {data?.bets.length! > 0 && agency && (
           <BetDetailComp
             agency={agency}
@@ -324,7 +344,7 @@ const Result = () => {
           />
         )}
       </div>
-      {isNew && agency_id && (
+      {agency_id && (
         <div className="fixed bottom-4 right-4">
           <button
             onClick={() =>

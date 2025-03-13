@@ -84,7 +84,7 @@ export interface IRegion {
 }
 
 export interface ICoefficient {
-  [key: string]: number
+  [key: string]: string
 }
 
 export interface ICoefficientAgency {

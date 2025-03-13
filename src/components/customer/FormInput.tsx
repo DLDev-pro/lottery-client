@@ -25,12 +25,12 @@ const FormInput = ({
     if (name.includes('1')) {
       setPay({
         ...pay,
-        [key]: parseInt(value),
+        [key]: (value),
       })
     } else {
       setRevenue({
         ...revenue,
-        [key]: parseInt(value),
+        [key]: (value),
       })
     }
   }
@@ -43,7 +43,7 @@ const FormInput = ({
             <label className="text-right w-32 mr-3">{item.name}</label>
 
             <input
-              type="number"
+              type="text"
               name={`${item.rule_unique_key}-1`}
               value={pay[item.rule_unique_key]}
               onChange={handleChange}
@@ -62,7 +62,7 @@ const FormInput = ({
           <div className="flex justify-center" key={item.id}>
             <label className="text-right w-32 mr-3">{item.name}</label>
             <input
-              type="number"
+              type="text"
               name={`${item.rule_unique_key}-2`}
               value={revenue[item.rule_unique_key]}
               onChange={handleChange}

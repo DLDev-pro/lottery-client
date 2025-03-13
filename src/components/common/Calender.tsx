@@ -14,10 +14,10 @@ const Calender: React.FC = () => {
   const { pathname, search } = useLocation()
 
   const handleNext = () => {
-    updateDate(new Date(date.setDate(date.getDate() + 1)))
+    updateDate(new Date(date?.setDate(date?.getDate() + 1) || ''))
   }
   const handlePrev = () => {
-    updateDate(new Date(date.setDate(date.getDate() - 1)))
+    updateDate(new Date(date?.setDate(date?.getDate() - 1) || ''))
   }
   useEffect(() => {
     if (pathname.includes('dat-cuoc')) {
@@ -30,23 +30,17 @@ const Calender: React.FC = () => {
   }, [pathname, search])
 
   return (
-    <div className='bg-main w-full py-1 pr-4 flex fixed z-50'>
-      {isDetail && bet && (
-        <div className='flex justify-between items-center'>
-          <h1 className='text-white font-bold'>{bet.agency_id}</h1>
+    <div className="bg-main w-full py-1 pr-4 flex fixed z-50">
+      {/* {isDetail && bet && (
+        <div className="flex justify-between items-center">
+          <h1 className="text-white font-bold">{bet.}</h1>
         </div>
-      )}
-      <div className='flex items-center text-white gap-2 flex-1'>
-        <IoIosArrowBack
-          className='cursor-pointer'
-          onClick={handlePrev}
-        />
+      )} */}
+      <div className="flex items-center text-white gap-2 flex-1">
+        <IoIosArrowBack className="cursor-pointer" onClick={handlePrev} />
         <SlCalender />
-        <span style={{ userSelect: 'none' }}>{date.toLocaleDateString()}</span>
-        <IoIosArrowForward
-          className='cursor-pointer'
-          onClick={handleNext}
-        />
+        <span style={{ userSelect: 'none' }}>{date?.toLocaleDateString()}</span>
+        <IoIosArrowForward className="cursor-pointer" onClick={handleNext} />
       </div>
     </div>
   )

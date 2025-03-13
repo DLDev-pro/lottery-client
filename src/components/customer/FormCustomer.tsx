@@ -49,7 +49,7 @@ const FormAgency = () => {
         setRule(data.data)
         const obj: ICoefficient = {}
         data.data.map((item: IRule) => {
-          obj[item.rule_unique_key] = 0
+          obj[item.rule_unique_key] = '0'
         })
         setPaySouth(obj)
         setPayMiddle(obj)
@@ -106,7 +106,7 @@ const FormAgency = () => {
     const data: ICoefficientAgency[] = []
     for (const key in coefficient) {
       data.push({
-        coefficient: coefficient[key as keyof ICoefficient],
+        coefficient: parseInt(coefficient[key as keyof ICoefficient]),
         region_unique_key: region,
         rule_unique_key: key,
       })

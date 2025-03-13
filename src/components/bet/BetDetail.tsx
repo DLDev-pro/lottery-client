@@ -21,12 +21,14 @@ interface BetDetailProps {
 
 const BetDetailComp = ({
   item,
-  index,
   agency,
+  index,
   pointMatched,
   pointMiddle,
   pointRaw,
 }: BetDetailProps) => {
+  const bet_id =
+    item !== null ? (item.bets.length > 0 ? item.bets[0].id : null) : null
   const [tab2, setTab2] = React.useState('Điểm')
 
   const [show, setShow] = React.useState(false) //show data money
@@ -38,7 +40,6 @@ const BetDetailComp = ({
   const location = useLocation()
 
   const [finalResult, setFinalResult] = React.useState<number>(0)
-
   useEffect(() => {
     const idNegative = location.pathname.split('/').pop()
     if (idNegative && parseInt(idNegative) === ID_NEGATIVE) {
@@ -56,62 +57,69 @@ const BetDetailComp = ({
     }
   }, [toggleOwn])
 
+  const date =
+    item === null
+      ? new Date()
+      : item.bets.length > 0
+      ? new Date(item.bets[0].open_date)
+      : new Date()
+
+  if (item === null) {
+    return <div>No data</div>
+  }
+
   return (
-    <div
-      className={`text-xs pb-2 ${
-        index !== -1 && 'border-t-[3px] border-black'
-      }`}
-    >
-      {index !== -1 && (
+    <div className={`text-xs pb-2 `}>
+      {!isNew && (
         <>
           <div className="font-bold pb-2 pt-1 border-b flex justify-between items-center">
             <h1 className="">
               {agency?.name} [
-              {new Date(item.bets[0].open_date)
-                .toISOString()
-                .split('T')[0]
-                .split('-')
-                .reverse()
-                .join('-')}
-              ]
+              {date.toISOString().split('T')[0].split('-').reverse().join('-')}]
             </h1>
-            <Link
-              to={`dat-cuoc/${item.bets[0].id}?agency_id=${agency?.id}`}
-              className="border border-white shadow-xl shadow-gray-700 rounded-lg p-1 px-2 bg-main text-white"
-            >
-              <MdEdit />
-            </Link>
+            {item.bets &&
+              item.bets.length > 0 &&
+              !location.pathname.includes('dat-cuoc') && (
+                <Link
+                  to={`dat-cuoc/${bet_id}?agency_id=${agency?.id}`}
+                  className="border border-white shadow-xl shadow-gray-700 rounded-lg p-1 px-2 bg-main text-white"
+                >
+                  <MdEdit />
+                </Link>
+              )}
           </div>
           <p>
             <span className="text-blue-500 font-bold">{index + 1}) </span>
-            {item.bets[0].bets.join(' ')}
+            {item !== null
+              ? item.bets.length > 0
+                ? item.bets[0].bets.join(' ')
+                : ''
+              : ''}
           </p>
         </>
       )}
-      {index === -1 && !isNew && (
-        <div className="bg-blue-500 pb-3 pt-2 pl-1 grid grid-cols-3 text-white">
-          <div>
-            <button
-              className={`rounded-l-2xl text-xs ${
-                tab2 === 'Điểm' ? 'bg-main' : 'bg-disable'
-              } px-2 h-fit`}
-              onClick={() => setTab2('Điểm')}
-            >
-              Điểm
-            </button>
-            <button
-              className={`rounded-r-2xl text-xs ${
-                tab2 === 'Xác' ? 'bg-main' : 'bg-disable'
-              } px-2 h-fit`}
-              onClick={() => setTab2('Xác')}
-            >
-              Xác
-            </button>
-          </div>
-          <h3> Qua cò</h3>
-          <h3>Trúng</h3>
+      <div className="bg-blue-500 pb-3 pt-2 pl-1 grid grid-cols-3 text-white">
+        <div>
+          <button
+            className={`rounded-l-2xl text-xs ${
+              tab2 === 'Điểm' ? 'bg-main' : 'bg-disable'
+            } px-2 h-fit`}
+            onClick={() => setTab2('Điểm')}
+          >
+            Điểm
+          </button>
+          <button
+            className={`rounded-r-2xl text-xs ${
+              tab2 === 'Xác' ? 'bg-main' : 'bg-disable'
+            } px-2 h-fit`}
+            onClick={() => setTab2('Xác')}
+          >
+            Xác
+          </button>
         </div>
-      )}
+        <h3> Qua cò</h3>
+        <h3>Trúng</h3>
+      </div>
 
       {pointRaw?.length! > 0 &&
         pointMiddle?.length! > 0 &&
@@ -144,23 +152,12 @@ const BetDetailComp = ({
           </div>
         )}
 
-      {index !== -1 && (
+      {!isNew && (
         <div className="flex justify-between items-center">
           <h1>
             Ngày dò:{' '}
-            {new Date(item.bets[0].open_date)
-              .toISOString()
-              .split('T')[0]
-              .split('-')
-              .reverse()
-              .join('-')}
+            {date.toISOString().split('T')[0].split('-').reverse().join('-')}
           </h1>
-          {/* <span
-            onClick={() => setShow(!show)}
-            className="cursor-pointer text-2xl text-main font-bold"
-          >
-            {!show ? <IoIosArrowDown /> : <IoIosArrowUp />}
-          </span> */}
         </div>
       )}
       {(show || index === -1) && (

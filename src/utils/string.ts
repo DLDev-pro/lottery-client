@@ -1,6 +1,13 @@
 import { SettingContext } from '@/contexts/SettingContext'
 import { useContext } from 'react'
-import { IBet, IProvince, IRuleAcronym, IStatistic } from './interface'
+import {
+  IBet,
+  IBetStatistic,
+  IProvince,
+  IRule,
+  IRuleAcronym,
+  IStatistic,
+} from './interface'
 import { SettingContextType } from './types'
 
 export const parseDateString = (dateString: string) => {
@@ -145,12 +152,12 @@ export const checkRule = (rule: IRuleAcronym[], bet: string) => {
   return extractedRules.filter((r) => !rules.has(r))
 }
 export const calculateStatistic = (
-  rules: IRuleAcronym[],
-  statisticRaw?: any[]
+  rules: IRule[],
+  statisticRaw?: IBetStatistic[]
 ): IStatistic[] =>
   (rules || []).map((rule) => {
     const matchedItems = statisticRaw?.filter(
-      (item) => item.rule_id === rule.rule_id
+      (item) => item.rule_id === rule.rule_unique_key
     )
 
     const totalScore =
@@ -160,14 +167,14 @@ export const calculateStatistic = (
       matchedItems?.reduce((sum, item) => sum + item.money_bet, 0) || 0
 
     return {
-      rule: rule.acronym,
+      rule: rule.rule_unique_key,
       score: totalScore,
       money: totalMoney,
     }
   })
-export const createEmptyStatistic = (rules: IRuleAcronym[]): IStatistic[] =>
+export const createEmptyStatistic = (rules: IRule[]): IStatistic[] =>
   (rules || []).map((rule) => ({
-    rule: rule.acronym,
+    rule: rule.rule_unique_key,
     score: 0,
     money: 0,
   }))

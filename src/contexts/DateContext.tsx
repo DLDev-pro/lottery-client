@@ -10,11 +10,22 @@ export const DateContext = React.createContext<DateContextType | undefined>(
 )
 
 const DateProvider: React.FC<DateProviderProps> = ({ children }) => {
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState<Date | undefined>(undefined)
 
   const updateDate = (date: Date) => {
     setDate(date)
+    //set localStorage
+    localStorage.setItem('date', date.toISOString().split('T')[0])
   }
+
+  useEffect(() => {
+    const date = localStorage.getItem('date')
+    if (date) {
+      setDate(new Date(date))
+    } else {
+      setDate(new Date())
+    }
+  }, [])
 
   return (
     <DateContext.Provider value={{ date, updateDate }}>

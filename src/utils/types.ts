@@ -16,7 +16,7 @@ export type RegionContextType = {
   region: string
 }
 export type DateContextType = {
-  date: Date
+  date: Date | undefined
   updateDate: (date: Date) => void
 }
 
