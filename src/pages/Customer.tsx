@@ -60,15 +60,6 @@ const Customer = () => {
                 <TableCell className="text-left border">
                   {customer.name}
                 </TableCell>
-                {/* <TableCell className="text-right border">
-                  <FaCubes />
-                </TableCell>
-                <TableCell className="text-left border">
-                  {customer.key}
-                </TableCell>
-                <TableCell className="text-right border">
-                  {customer.password}
-                </TableCell> */}
                 <TableCell
                   onClick={() => updateAgency(customer)}
                   className="text-right border"

@@ -77,8 +77,8 @@ const FormAgency = () => {
   const getDetail = async (id: string) => {
     const response = await agencyApi.GetAgency(id)
     const { data } = response
-    if (data) {
-      setAgencyCreate(data)
+    if (data && data.data) {
+      setAgencyCreate(data.data)
     }
   }
 
@@ -106,7 +106,7 @@ const FormAgency = () => {
     const data: ICoefficientAgency[] = []
     for (const key in coefficient) {
       data.push({
-        coefficient: parseInt(coefficient[key as keyof ICoefficient]),
+        coefficient: parseFloat(coefficient[key as keyof ICoefficient]),
         region_unique_key: region,
         rule_unique_key: key,
       })

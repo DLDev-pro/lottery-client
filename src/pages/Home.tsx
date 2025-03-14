@@ -25,6 +25,9 @@ const Home = () => {
 
   const getBet = async () => {
     try {
+      if (!date) {
+        return
+      }
       const response = await betApi.GetBets({
         open_date: date.toISOString().split('T')[0],
       })
