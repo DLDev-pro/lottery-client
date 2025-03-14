@@ -172,6 +172,16 @@ const FormAgency = () => {
           title: 'Thành công',
         })
         setAgencyCreate(initState)
+        const obj: ICoefficient = {}
+        rule.map((item: IRule) => {
+          obj[item.rule_unique_key] = '0'
+        })
+        setPaySouth(obj)
+        setPayMiddle(obj)
+        setPayNorth(obj)
+        setRevenueSouth(obj)
+        setRevenueMiddle(obj)
+        setRevenueNorth(obj)
       }
 
       if (status === 400) {
