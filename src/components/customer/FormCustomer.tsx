@@ -79,6 +79,23 @@ const FormAgency = () => {
     const { data } = response
     if (data && data.data) {
       setAgencyCreate(data.data)
+      console.log(data.data)
+
+      const obj: ICoefficient = {}
+      data.data.agency_pays.map((item: any) => {
+        obj[item.Rule.rule_unique_key] = item.coefficient
+      })
+      setPaySouth(obj)
+      setPayMiddle(obj)
+      setPayNorth(obj)
+
+      const objRevenue: ICoefficient = {}
+      data.data.agency_revenues.map((item: any) => {
+        objRevenue[item.Rule.rule_unique_key] = item.coefficient
+      })
+      setRevenueSouth(objRevenue)
+      setRevenueMiddle(objRevenue)
+      setRevenueNorth(objRevenue)
     }
   }
 
@@ -86,7 +103,6 @@ const FormAgency = () => {
     if (search.includes('agency_id')) {
       const agencyId = search.split('=')[1]
       if (agencyId) {
-        // setAgencyCreate(agency)
         getDetail(agencyId)
       }
     }
@@ -113,6 +129,7 @@ const FormAgency = () => {
     }
     return data
   } // [{ coefficient: number, region_unique_key:string, rule_unique_key:string }]
+  console.log(agencyCreate)
 
   const handleSave = async (e: FormSubmit) => {
     e.preventDefault()
@@ -162,9 +179,15 @@ const FormAgency = () => {
         setLoading(false)
         return
       }
-
-      // Call API to save agency
-      const response = await agencyApi.CreateAgency(finalData)
+      let response: any
+      if (agencyCreate.id) {
+        response = await agencyApi.UpdateAgency(
+          agencyCreate.id.toString(),
+          finalData
+        )
+      } else {
+        response = await agencyApi.CreateAgency(finalData)
+      }
       const { data, status } = response
       if (status === 200) {
         toast({

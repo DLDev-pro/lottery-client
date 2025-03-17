@@ -110,13 +110,13 @@ const BetDetail = () => {
         region_unique_key: region,
         bets: transferBet(provinces, content),
       }
-
       if (bet_id && bet_id !== '-1') {
         data = {
           ...data,
           bet_id: Number(bet_id),
         }
       }
+
       const response = await betApi.CreateBet(data)
       if (response) {
         const { data } = response
@@ -125,7 +125,18 @@ const BetDetail = () => {
             title: 'Thêm dữ liệu thành công',
             variant: 'success',
           })
-          window.location.reload()
+
+          //repalace -1 to data.data.id
+          if (data.data.id) {
+            // const path = location.pathname.split('/')
+            // path[path.length - 1] = data.bet_id?.toString() || ''
+            // const newPath =
+            //   path.join('/') + data.data.id + `?agency_id=${agency_id}`
+            // console.log(newPath)
+            // window.location.replace(newPath)
+          }
+
+          // window.location.reload()
         }
       }
     } catch (error) {
@@ -209,6 +220,7 @@ const BetDetail = () => {
   const [content, setContent] = useState('')
   useEffect(() => {
     if (bet && bet.bets.length > 0) {
+      console.log(bet)
       if (tab.key === 1) {
         setContent(bet?.bets[0].bets.map((item) => item).join('\n'))
       } else if (tab.key === 2) {
@@ -216,7 +228,16 @@ const BetDetail = () => {
       } else if (tab.key === 3 || tab.key === 4) {
         setContent('')
       } else if (tab.key === 5) {
-        setContent(bet.win.map((item) => item).join(';'))
+        setContent(
+          bet.win
+            .map((item) => {
+              if (item.score > 1) {
+                return item.bet_win + '(' + item.score + ')'
+              }
+              return item.bet_win
+            })
+            .join(';')
+        )
       }
     } else {
       setContent('')
@@ -224,8 +245,8 @@ const BetDetail = () => {
   }, [tab, bet])
   useEffect(() => {
     if (tab.key === 1) {
-      setProvinceError(checkProvince(provinces, content, rules))
-      setRuleError(checkRule(rules, content))
+      setProvinceError(checkProvince(provinces, content.trim(), rules))
+      setRuleError(checkRule(rules, content.trim()))
     }
   }, [content])
   return (
@@ -258,8 +279,9 @@ const BetDetail = () => {
       </div>
       <textarea
         className={`w-full h-40 border border-gray-400 p-2 resize-vertical ${
-          tab.key === 5 && 'text-main'
+          tab.key === 5 ? 'text-main' : ''
         }`}
+        disabled={tab.key !== 1}
         onChange={(e) => setContent(e.target.value)}
         value={content}
       />

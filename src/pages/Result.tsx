@@ -4,7 +4,6 @@ import BetDetailComp from '@/components/bet/BetDetail'
 import { Button } from '@/components/ui/button'
 import { DateContext } from '@/contexts/DateContext'
 import { RegionContext } from '@/contexts/RegionContext'
-import { SettingContext } from '@/contexts/SettingContext'
 import { ID_NEGATIVE, PATHS } from '@/utils/constants'
 // import { bet } from '@/utils/data'
 import {
@@ -20,11 +19,7 @@ import {
   createEmptyStatistic,
   totalPoints,
 } from '@/utils/string'
-import {
-  DateContextType,
-  RegionContextType,
-  SettingContextType,
-} from '@/utils/types'
+import { DateContextType, RegionContextType } from '@/utils/types'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { FaCogs, FaPlus } from 'react-icons/fa'
 import { useLocation, useNavigate } from 'react-router-dom'

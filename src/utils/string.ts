@@ -82,18 +82,33 @@ export const getCity = (city: string): string => {
 
 export const transferBet = (provinces: IProvince[], bet: string) => {
   const acronyms = provinces.map((p) => p.acronym).concat('2dai', '3dai')
-  const result: string[] = []
+  let result = []
   let temp = ''
-
-  bet.split(/\s+/).forEach((word) => {
+  const tokens = bet.split(/\s+/)
+  tokens.forEach((word) => {
     if (acronyms.includes(word.toLowerCase())) {
-      if (temp) result.push(temp.trim())
-      temp = word
+      if (!temp) {
+        // Nếu temp rỗng, bắt đầu với từ đầu tiên
+        temp = word
+      } else {
+        // Tách temp thành các token để kiểm tra
+        const tempTokens = temp.trim().split(/\s+/)
+        const allAcronyms = tempTokens.every((t) =>
+          acronyms.includes(t.toLowerCase())
+        )
+        if (allAcronyms) {
+          // Nếu temp chỉ chứa các tỉnh, nối thêm word
+          temp += ' ' + word
+        } else {
+          // Nếu temp đã chứa số hay chữ khác, đóng nhóm hiện tại và bắt đầu nhóm mới
+          result.push(temp.trim())
+          temp = word
+        }
+      }
     } else {
       temp += ' ' + word
     }
   })
-
   if (temp) result.push(temp.trim())
 
   return result.filter((item) => acronyms.includes(item.split(' ')[0]))

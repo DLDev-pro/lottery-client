@@ -15,6 +15,7 @@ import { FormSubmit, InputChange } from '@/utils/types'
 import { validationLogin } from '@/utils/validation/auth'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Toaster } from '@/components/ui/toaster'
 
 export default function Login() {
   const initialValues: ILoginUser = {
@@ -51,7 +52,16 @@ export default function Login() {
       // Call API to login user
       const response = await authApi.Login(values.username, values.password)
       const { data, status } = response
-      if (status === 200) {
+      if (data.status === 404) {
+        console.log(data)
+        toast({
+          variant: 'destructive',
+          title: 'Tên đăng nhập hoặc mật khẩu không chính xác',
+        })
+        setLoading(false)
+
+        return
+      } else {
         localStorage.setItem('token', data.data.access_token)
         setValues(initialValues)
 
@@ -60,15 +70,9 @@ export default function Login() {
           title: 'Thành công',
         })
         window.location.href = PATHS.HOME
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Thất bại',
-        })
-      }
-      setLoading(false)
 
-      return
+        setLoading(false)
+      }
     } catch (error: any) {
       console.log(error)
       toast({
@@ -93,6 +97,8 @@ export default function Login() {
 
   return (
     <div className="h-screen flex pt-24 bg-black">
+      <Toaster />
+
       {loading && <Loading />}
       <Card className="mx-auto max-w-sm bg-black border-none">
         <CardHeader className="space-y-1">
