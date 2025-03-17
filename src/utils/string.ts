@@ -193,3 +193,20 @@ export const createEmptyStatistic = (rules: IRule[]): IStatistic[] =>
     score: 0,
     money: 0,
   }))
+
+// actual_money_received
+export const calculateStatisticReceived = (
+  rules: IRule[],
+  statisticRaw?: IBetStatistic[]
+): IStatistic[] =>
+  (rules || []).map((rule) => {
+    const matchedItem = statisticRaw?.find(
+      (item) => item.rule_id === rule.rule_unique_key
+    )
+
+    return {
+      rule: rule.rule_unique_key,
+      score: 0,
+      money: matchedItem?.actual_money_received || 0,
+    }
+  })

@@ -16,6 +16,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { useToast } from '../ui/use-toast'
 import FormInput from './FormInput'
+import { PATHS } from '@/utils/constants'
 
 const FormAgency = () => {
   const { central, north, south } = useContext(
@@ -63,6 +64,8 @@ const FormAgency = () => {
     }
   }
 
+  console.log(south)
+
   useEffect(() => {
     getRule()
   }, [])
@@ -79,23 +82,45 @@ const FormAgency = () => {
     const { data } = response
     if (data && data.data) {
       setAgencyCreate(data.data)
-      console.log(data.data)
 
-      const obj: ICoefficient = {}
+      const objSouth: ICoefficient = {}
+      const objMiddle: ICoefficient = {}
+      const objNorth: ICoefficient = {}
+
       data.data.agency_pays.map((item: any) => {
-        obj[item.Rule.rule_unique_key] = item.coefficient
+        if (item.region_id === 3) {
+          objSouth[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 2) {
+          objMiddle[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 1) {
+          objNorth[item.Rule.rule_unique_key] = item.coefficient
+        }
       })
-      setPaySouth(obj)
-      setPayMiddle(obj)
-      setPayNorth(obj)
 
-      const objRevenue: ICoefficient = {}
+      const objRevenueSouth: ICoefficient = {}
+      const objRevenueMiddle: ICoefficient = {}
+      const objRevenueNorth: ICoefficient = {}
+
       data.data.agency_revenues.map((item: any) => {
-        objRevenue[item.Rule.rule_unique_key] = item.coefficient
+        if (item.region_id === 3) {
+          objRevenueSouth[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 2) {
+          objRevenueMiddle[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 1) {
+          objRevenueNorth[item.Rule.rule_unique_key] = item.coefficient
+        }
       })
-      setRevenueSouth(objRevenue)
-      setRevenueMiddle(objRevenue)
-      setRevenueNorth(objRevenue)
+
+      setPaySouth(objSouth)
+      setPayMiddle(objMiddle)
+      setPayNorth(objNorth)
+      setRevenueSouth(objRevenueSouth)
+      setRevenueMiddle(objRevenueMiddle)
+      setRevenueNorth(objRevenueNorth)
     }
   }
 
@@ -205,6 +230,7 @@ const FormAgency = () => {
         setRevenueSouth(obj)
         setRevenueMiddle(obj)
         setRevenueNorth(obj)
+        window.location.href = PATHS.KHACH_HANG
       }
 
       if (status === 400) {

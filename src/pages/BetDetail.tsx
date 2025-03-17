@@ -14,6 +14,7 @@ import {
 } from '@/utils/interface'
 import {
   calculateStatistic,
+  calculateStatisticReceived,
   checkProvince,
   checkRule,
   transferBet,
@@ -98,6 +99,8 @@ const BetDetail = () => {
       const bet_id = location.pathname.split('/').pop()
       const agency_id = location.search.split('=')[1]
 
+      const contentTransfer = content.replace(',', '.')
+
       let data: {
         agency_id: number
         open_date: string
@@ -108,7 +111,7 @@ const BetDetail = () => {
         agency_id: Number(agency_id),
         open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key: region,
-        bets: transferBet(provinces, content),
+        bets: transferBet(provinces, contentTransfer),
       }
       if (bet_id && bet_id !== '-1') {
         data = {
@@ -132,7 +135,6 @@ const BetDetail = () => {
             // path[path.length - 1] = data.bet_id?.toString() || ''
             // const newPath =
             //   path.join('/') + data.data.id + `?agency_id=${agency_id}`
-            // console.log(newPath)
             // window.location.replace(newPath)
           }
 
@@ -194,21 +196,26 @@ const BetDetail = () => {
     }
   }, [date])
 
-  const createEmptyStatistic = (rules: IRuleAcronym[]): IStatistic[] =>
+  const createEmptyStatistic = (rules: IRule[]): IStatistic[] =>
     (rules || []).map((rule) => ({
-      rule: rule.acronym,
+      rule: rule.rule_unique_key,
       score: 0,
       money: 0,
     }))
 
   useEffect(() => {
-    const emptyStatistics = createEmptyStatistic(rules)
+    const emptyStatistics = createEmptyStatistic(rulesGlobal)
     if (bet) {
       const statisticRaw = bet?.statistic || []
       const flattenedRaw = statisticRaw.flat()
       const statisticFilled = calculateStatistic(rulesGlobal, flattenedRaw)
       setPointRaw(statisticFilled)
-      setPointMiddle(emptyStatistics)
+      const statisticReceived = calculateStatisticReceived(
+        rulesGlobal,
+        flattenedRaw
+      )
+      console.log(statisticReceived)
+      setPointMiddle(statisticReceived)
       setPointMatched(emptyStatistics)
     } else {
       setPointRaw(emptyStatistics)
@@ -220,7 +227,6 @@ const BetDetail = () => {
   const [content, setContent] = useState('')
   useEffect(() => {
     if (bet && bet.bets.length > 0) {
-      console.log(bet)
       if (tab.key === 1) {
         setContent(bet?.bets[0].bets.map((item) => item).join('\n'))
       } else if (tab.key === 2) {

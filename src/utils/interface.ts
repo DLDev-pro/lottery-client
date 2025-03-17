@@ -156,6 +156,7 @@ export interface IBetStatistic {
   rule_id: string
   score: number
   money_bet: number
+  actual_money_received: number
   created_at: Date
   updated_at: Date
   deleted_at: null
