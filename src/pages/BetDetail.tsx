@@ -6,12 +6,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { DateContext } from '@/contexts/DateContext'
 import { SettingContext } from '@/contexts/SettingContext'
 import { PATHS } from '@/utils/constants'
-import {
-  IBetResultDetailInner,
-  IRule,
-  IRuleAcronym,
-  IStatistic,
-} from '@/utils/interface'
+import { IBetResultDetailInner, IRule, IStatistic } from '@/utils/interface'
 import {
   calculateStatistic,
   calculateStatisticMatched,
@@ -100,7 +95,25 @@ const BetDetail = () => {
       const bet_id = location.pathname.split('/').pop()
       const agency_id = location.search.split('=')[1]
 
-      const contentTransfer = content.replace(',', '.')
+      let contentTransfer = content.replace(/,/g, '.')
+
+      const province_acronym = bet?.province_acronym.map(
+        (item) => item.acronym
+      )[0]
+
+      if (region === 'north') {
+        //check content has province_acronym
+        contentTransfer = contentTransfer
+          .split(/\n/)
+          .map((item) => {
+            if (item.includes(province_acronym!)) {
+              return item
+            } else {
+              return province_acronym! + ' ' + item
+            }
+          })
+          .join('\n')
+      }
 
       let data: {
         agency_id: number
@@ -132,11 +145,11 @@ const BetDetail = () => {
 
           //repalace -1 to data.data.id
           if (data.data.id) {
-            // const path = location.pathname.split('/')
-            // path[path.length - 1] = data.bet_id?.toString() || ''
-            // const newPath =
-            //   path.join('/') + data.data.id + `?agency_id=${agency_id}`
-            // window.location.replace(newPath)
+            const path = location.pathname.split('/')
+            path[path.length - 1] = data.bet_id?.toString() || ''
+            const newPath =
+              path.join('/') + data.data.id + `?agency_id=${agency_id}`
+            window.location.replace(newPath)
           }
 
           // window.location.reload()
@@ -245,7 +258,7 @@ const BetDetail = () => {
           bet.win
             .map((item) => {
               if (item.score > 1) {
-                return item.bet_win + '(' + item.score + ')'
+                return item.bet_win
               }
               return item.bet_win
             })
@@ -258,7 +271,9 @@ const BetDetail = () => {
   }, [tab, bet])
   useEffect(() => {
     if (tab.key === 1) {
-      setProvinceError(checkProvince(provinces, content.trim(), rules))
+      if (!location.pathname.includes(PATHS.MIEN_BAC)) {
+        setProvinceError(checkProvince(provinces, content.trim(), rules))
+      }
       setRuleError(checkRule(rules, content.trim()))
     }
   }, [content])

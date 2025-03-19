@@ -162,6 +162,18 @@ const BetDetailComp = ({
           </div>
         )}
 
+      <div className="py-1 pl-1 grid grid-cols-3 text-main">
+        <strong className="text-black ml-12">
+          : {pointRaw.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
+        </strong>
+        <strong className="text-black ml-12">
+          : {pointMiddle.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
+        </strong>
+        <strong className="text-black ml-12">
+          : {pointMatched.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
+        </strong>
+      </div>
+
       {!isNew && (
         <div className="flex justify-between items-center">
           <h1>
