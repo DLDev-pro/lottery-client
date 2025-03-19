@@ -184,6 +184,7 @@ export interface IBetWin {
   bet_win: string
   score: number
   money_win: number
+  rule_unique_key: string
   created_at: Date
   updated_at: Date
   deleted_at: null

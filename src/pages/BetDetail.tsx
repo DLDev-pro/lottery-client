@@ -14,6 +14,7 @@ import {
 } from '@/utils/interface'
 import {
   calculateStatistic,
+  calculateStatisticMatched,
   calculateStatisticReceived,
   checkProvince,
   checkRule,
@@ -214,9 +215,15 @@ const BetDetail = () => {
         rulesGlobal,
         flattenedRaw
       )
-      console.log(statisticReceived)
       setPointMiddle(statisticReceived)
-      setPointMatched(emptyStatistics)
+
+      const statisticWin = bet?.win || []
+
+      const statisticMatched = calculateStatisticMatched(
+        rulesGlobal,
+        statisticWin
+      )
+      setPointMatched(statisticMatched)
     } else {
       setPointRaw(emptyStatistics)
       setPointMiddle(emptyStatistics)

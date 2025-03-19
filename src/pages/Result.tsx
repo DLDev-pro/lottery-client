@@ -16,6 +16,8 @@ import {
 } from '@/utils/interface'
 import {
   calculateStatistic,
+  calculateStatisticMatched,
+  calculateStatisticReceived,
   createEmptyStatistic,
   totalPoints,
 } from '@/utils/string'
@@ -154,9 +156,13 @@ const Result = () => {
     )
     setPointRaw(statisticFilled)
 
-    const emptyStatistics = createEmptyStatistic(rules)
-    setPointMiddle(emptyStatistics)
-    setPointMatched(emptyStatistics)
+    const statisticReceived = calculateStatisticReceived(rules, flattenedRaw)
+    setPointMiddle(statisticReceived)
+
+    const statisticWin = data?.win || []
+
+    const statisticMatched = calculateStatisticMatched(rules, statisticWin)
+    setPointMatched(statisticMatched)
   }, [datas, rules])
 
   useEffect(() => {
@@ -164,9 +170,12 @@ const Result = () => {
     const flattenedRaw = statisticRaw.flat()
     const statisticFilled = calculateStatistic(rules, flattenedRaw)
     setPointRaw(statisticFilled)
-    const emptyStatistics = createEmptyStatistic(rules)
-    setPointMiddle(emptyStatistics)
-    setPointMatched(emptyStatistics)
+    const statisticReceived = calculateStatisticReceived(rules, flattenedRaw)
+    setPointMiddle(statisticReceived)
+    const statisticWin = data?.win || []
+
+    const statisticMatched = calculateStatisticMatched(rules, statisticWin)
+    setPointMatched(statisticMatched)
   }, [data, rules])
 
   const point = totalPoints([])

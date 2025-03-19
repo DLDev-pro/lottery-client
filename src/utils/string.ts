@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import {
   IBet,
   IBetStatistic,
+  IBetWin,
   IProvince,
   IRule,
   IRuleAcronym,
@@ -208,5 +209,27 @@ export const calculateStatisticReceived = (
       rule: rule.rule_unique_key,
       score: 0,
       money: matchedItem?.actual_money_received || 0,
+    }
+  })
+
+export const calculateStatisticMatched = (
+  rules: IRule[],
+  statisticRaw?: IBetWin[]
+): IStatistic[] =>
+  (rules || []).map((rule) => {
+    const matchedItems = statisticRaw?.filter(
+      (item) => item.rule_unique_key === rule.rule_unique_key
+    )
+
+    const totalScore =
+      matchedItems?.reduce((sum, item) => sum + item.score, 0) || 0
+
+    const totalMoney =
+      matchedItems?.reduce((sum, item) => sum + item.money_win, 0) || 0
+
+    return {
+      rule: rule.rule_unique_key,
+      score: totalScore,
+      money: totalMoney,
     }
   })

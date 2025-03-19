@@ -155,7 +155,7 @@ const BetDetailComp = ({
               {pointMatched?.map((val, index) => (
                 <div key={index} className="flex font-bold text-xs">
                   <span className="w-12">{val.rule}</span>
-                  <span>: {val.score}</span>
+                  <span>: {tab2 === 'Điểm' ? val.score : val.money}</span>
                 </div>
               ))}
             </div>
