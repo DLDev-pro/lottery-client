@@ -302,7 +302,7 @@ const BetDetail = () => {
   useEffect(() => {
     if (tab.key === 1) {
       if (!location.pathname.includes(PATHS.MIEN_BAC)) {
-        setProvinceError(checkProvince(validProvince, content.trim(), rules));
+        setProvinceError(checkProvince(provinces, content.trim(), rules));
       }
       setRuleError(checkRule(rules, content.trim()));
     }
