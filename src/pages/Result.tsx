@@ -289,13 +289,13 @@ const Result = () => {
         }`}
       >
         <span className="pl-8">
-          :{pointRaw.reduce((acc, val) => acc + val.score, 0)}
+          :{pointRaw.reduce((acc, val) => acc + val.score, 0).toFixed(1)}
         </span>
         <span className="pl-8">
-          :{pointMiddle.reduce((acc, val) => acc + val.money, 0)}
+          :{pointMiddle.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
         </span>
         <span className="pl-8">
-          :{pointMatched.reduce((acc, val) => acc + val.score, 0)}
+          :{pointMatched.reduce((acc, val) => acc + val.score, 0).toFixed(1)}
         </span>
       </div>
       <p
@@ -320,7 +320,17 @@ const Result = () => {
                       rules,
                       flattenedRaw
                     )
-                    const emptyStatistics = createEmptyStatistic(rules)
+
+                    const statisticReceived = calculateStatisticReceived(
+                      rules,
+                      flattenedRaw
+                    )
+                    const statisticWin = item2?.win || []
+
+                    const statisticMatched = calculateStatisticMatched(
+                      rules,
+                      statisticWin
+                    )
                     return (
                       <div key={`${outerIndex}-${innerIndex}`}>
                         <BetDetailComp
@@ -328,8 +338,8 @@ const Result = () => {
                           item={item2}
                           index={innerIndex}
                           pointRaw={statisticFilled}
-                          pointMiddle={emptyStatistics}
-                          pointMatched={emptyStatistics}
+                          pointMiddle={statisticReceived}
+                          pointMatched={statisticMatched}
                         />
                       </div>
                     )

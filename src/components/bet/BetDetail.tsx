@@ -139,7 +139,12 @@ const BetDetailComp = ({
               {pointRaw?.map((val, index) => (
                 <div key={index} className="flex font-bold text-xs">
                   <span className="w-12">{val.rule}</span>
-                  <span>: {tab2 === 'Điểm' ? val.score : val.money}</span>
+                  <span>
+                    :{' '}
+                    {tab2 === 'Điểm'
+                      ? val.score.toFixed(1)
+                      : val.money.toFixed(1)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -147,7 +152,7 @@ const BetDetailComp = ({
               {pointMiddle?.map((val, index) => (
                 <div key={index} className="flex font-bold text-xs">
                   <span className="w-12">{val.rule}</span>
-                  <span>: {val.money}</span>
+                  <span>: {val.money.toFixed(1)}</span>
                 </div>
               ))}
             </div>
@@ -155,7 +160,12 @@ const BetDetailComp = ({
               {pointMatched?.map((val, index) => (
                 <div key={index} className="flex font-bold text-xs">
                   <span className="w-12">{val.rule}</span>
-                  <span>: {tab2 === 'Điểm' ? val.score : val.money}</span>
+                  <span>
+                    :{' '}
+                    {tab2 === 'Điểm'
+                      ? val.score.toFixed(1)
+                      : val.money.toFixed(1)}
+                  </span>
                 </div>
               ))}
             </div>
