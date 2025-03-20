@@ -32,4 +32,9 @@ const UpdateSetting = async (data: unknown) => {
   return response
 }
 
-export { GetRegion, GetLotterySchedule, GetSetting, UpdateSetting, GetAllRule }
+const GetLotteryResult = async (data: any) => {
+  const response = await apiCaller('GET', `${PATH}lottery-result?date=${data.date}&region_unique_key=${data.region}`, data)
+  return response
+}
+
+export { GetRegion, GetLotterySchedule, GetSetting, UpdateSetting, GetAllRule, GetLotteryResult }
