@@ -149,13 +149,13 @@ const BetDetail = () => {
               title: "Thành công",
               variant: "success",
             });
-            // if (data.data.id) {
-            //   const path = location.pathname.split("/");
-            //   path[path.length - 1] = data.bet_id?.toString() || "";
-            //   const newPath =
-            //     path.join("/") + data.data.id + `?agency_id=${agency_id}`;
-            //   window.location.replace(newPath);
-            // }
+            if (data.data.id) {
+              const path = location.pathname.split("/");
+              path[path.length - 1] = data.bet_id?.toString() || "";
+              const newPath =
+                path.join("/") + data.data.id + `?agency_id=${agency_id}`;
+              window.location.replace(newPath);
+            }
           } else {
             toast({
               variant: "destructive",
