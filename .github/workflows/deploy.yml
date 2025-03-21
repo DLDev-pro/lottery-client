@@ -28,5 +28,5 @@ jobs:
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
           cd /home/app/lottery-client
           git pull origin master
-          pm2 restart all
+          /root/.nvm/versions/node/v22.14.0/bin/pm2 restart "client-app"
           EOF
