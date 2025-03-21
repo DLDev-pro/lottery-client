@@ -308,6 +308,24 @@ const BetDetail = () => {
     }
   }, [content]);
 
+  rules.push(
+    {
+      acronym: "hang",
+      rule_id: 0,
+      rule_name: "Hàng",
+    },
+    {
+      acronym: "keo",
+      rule_id: 0,
+      rule_name: "Kéo",
+    },
+    {
+      acronym: "dit",
+      rule_id: 0,
+      rule_name: "Đít",
+    }
+  );
+
   return (
     <div>
       <div className="space-x-1 border-b border-gray-400 pb-1">
