@@ -89,7 +89,7 @@ const BetDetail = () => {
 
   const handleAddBet = async () => {
     try {
-      if (ruleError.length > 0 || provinceError.length > 0) {
+      if ((ruleError.length > 0 || provinceError.length > 0) && content != "") {
         toast({
           variant: "destructive",
           title: "Lỗi nhập liệu",
@@ -106,7 +106,7 @@ const BetDetail = () => {
         (item) => item.acronym
       )[0];
 
-      if (region === "north") {
+      if (region === "north" && content != "") {
         //check content has province_acronym
         contentTransfer = contentTransfer
           .split(/\n/)
@@ -176,6 +176,7 @@ const BetDetail = () => {
         }
       }
     } catch (error) {
+      console.log(error);
       toast({
         variant: "destructive",
         title: "Lỗi nhập liệu",
