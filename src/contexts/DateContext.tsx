@@ -14,12 +14,12 @@ const DateProvider: React.FC<DateProviderProps> = ({ children }) => {
 
   const updateDate = (date: Date) => {
     setDate(date)
-    //set localStorage
-    localStorage.setItem('date', date.toISOString().split('T')[0])
+    //set sessionStorage
+    sessionStorage.setItem('date', date.toISOString().split('T')[0])
   }
 
   useEffect(() => {
-    const date = localStorage.getItem('date')
+    const date = sessionStorage.getItem('date')
     if (date) {
       setDate(new Date(date))
     } else {

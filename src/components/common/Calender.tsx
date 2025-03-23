@@ -1,6 +1,5 @@
-import { BetContext } from '@/contexts/BetContext'
 import { DateContext } from '@/contexts/DateContext'
-import { BetContextType, DateContextType } from '@/utils/types'
+import { DateContextType } from '@/utils/types'
 import React, { useContext, useEffect } from 'react'
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io'
 import { SlCalender } from 'react-icons/sl'
@@ -29,7 +28,7 @@ const Calender: React.FC = () => {
   }, [pathname, search])
 
   return (
-    <div className="bg-main w-full py-1 pr-4 flex fixed z-50">
+    <div className="bg-main w-full py-1 pr-4 flex fixed z-40">
       <div className="flex items-center text-white gap-2 flex-1">
         <IoIosArrowBack className="cursor-pointer" onClick={handlePrev} />
         <SlCalender />

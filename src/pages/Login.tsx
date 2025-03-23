@@ -29,7 +29,7 @@ export default function Login() {
   const [values, setValues] = useState<ILoginUser>(initialValues)
   const [togglePassword, setTogglePassword] = useState(false)
 
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
 
   const handleSubmit = async (e: FormSubmit) => {
     e.preventDefault()
@@ -62,7 +62,7 @@ export default function Login() {
 
         return
       } else {
-        localStorage.setItem('token', data.data.access_token)
+        sessionStorage.setItem('token', data.data.access_token)
         setValues(initialValues)
 
         toast({

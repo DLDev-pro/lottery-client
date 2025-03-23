@@ -1,4 +1,5 @@
 import { TResponseData, TResponseError } from '@/types/response'
+import { API_URL } from '@/utils/constants'
 import { autoLogout } from '@/utils/helper'
 import { Method } from '@/utils/types'
 import axios, {
@@ -10,7 +11,6 @@ import axios, {
 } from 'axios'
 
 // Lấy API URL từ biến môi trường
-const API_URL = import.meta.env.VITE_SERVER_URL
 
 export const axiosPublic = axios.create({
   baseURL: API_URL, // Đặt baseURL thành API_URL từ biến môi trường
@@ -19,7 +19,7 @@ export const axiosPublic = axios.create({
 
 axiosPublic.interceptors.request.use(
   async function (config: InternalAxiosRequestConfig) {
-    const accessToken = localStorage.getItem('token')
+    const accessToken = sessionStorage.getItem('token')
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }

@@ -25,12 +25,12 @@ const FormInput = ({
     if (name.includes('1')) {
       setPay({
         ...pay,
-        [key]: (value),
+        [key]: value,
       })
     } else {
       setRevenue({
         ...revenue,
-        [key]: (value),
+        [key]: value,
       })
     }
   }
@@ -59,7 +59,7 @@ const FormInput = ({
     return (
       <>
         {rule.map((item) => (
-          <div className="flex justify-center" key={item.id}>
+          <div className="flex justify-center items-center" key={item.id}>
             <label className="text-right w-32 mr-3">{item.name}</label>
             <input
               type="text"
@@ -80,12 +80,18 @@ const FormInput = ({
   return (
     <div className="bg-white text-orange-500 text-center">
       <p className="shadow shadow-gray-400 w-full py-1">{region}</p>
-      <div className="shadow shadow-gray-400 w-full py-1 grid grid-cols-2">
+      <div className="sm:hidden shadow shadow-gray-400 w-full py-1 md:grid grid-cols-2">
         <span>Hệ số thu</span>
         <span>Hệ số trả</span>
       </div>
-      <div className="shadow shadow-gray-400 w-full py-1 grid grid-cols-2">
+      <div className="sm:hidden shadow shadow-gray-400 w-full py-1 md:grid grid-cols-2">
         <div>{generatePay(rule)}</div>
+        <div>{generateRevenue(rule)}</div>
+      </div>
+      <div className="md:hidden">
+        <span>Hệ số thu</span>
+        <div>{generatePay(rule)}</div>
+        <span>Hệ số trả</span>
         <div>{generateRevenue(rule)}</div>
       </div>
     </div>

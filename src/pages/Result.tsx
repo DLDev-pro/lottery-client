@@ -134,6 +134,7 @@ const Result = () => {
   useEffect(() => {
     getData()
   }, [date])
+  console.log(datas)
 
   useEffect(() => {
     if (datas.length === 0) {

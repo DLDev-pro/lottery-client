@@ -35,7 +35,7 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   }
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('token')
+    const accessToken = sessionStorage.getItem('token')
     if (!accessToken) {
       return
     }

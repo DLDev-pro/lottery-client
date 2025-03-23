@@ -26,7 +26,7 @@ const AgencyProvider: React.FC<AgencyProviderProps> = ({ children }) => {
       }
     }
 
-    const accessToken = localStorage.getItem('token')
+    const accessToken = sessionStorage.getItem('token')
     if (!accessToken) {
       return
     }
