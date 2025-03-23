@@ -5,6 +5,7 @@ import {
   IBetStatistic,
   IBetWin,
   IProvince,
+  IProvinceAcronym,
   IRule,
   IRuleAcronym,
   IStatistic,
@@ -116,11 +117,17 @@ export const transferBet = (provinces: IProvince[], bet: string) => {
 }
 
 export const checkProvince = (
-  provinces: IProvince[],
+  provinces: IProvinceAcronym[],
   bet: string,
   rules: IRuleAcronym[]
 ) => {
-  const acronyms = provinces.map((p) => p.acronym).concat('2dai', '3dai')
+  const acronyms = provinces.map((p) => p.acronym)
+
+  const numberOfProvinces = provinces.length
+  if (numberOfProvinces >= 2 && numberOfProvinces <= 4) {
+    acronyms.push(`${numberOfProvinces}dai`)
+  }
+
   const provincesFromBet = getProvincesFromBet(bet, rules)
   return provincesFromBet.filter((item) => !acronyms.includes(item))
 }

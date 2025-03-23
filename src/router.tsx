@@ -1,4 +1,6 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
+import { lazy } from 'react'
 
 import { Toaster } from '@/components/ui/toaster'
 import Home from '@/pages/Home'
@@ -16,12 +18,17 @@ import ResultCustomer from './pages/ResultCustomer'
 import ResultLottery from './pages/ResultLottery'
 import Setting from './pages/Setting'
 import TypeLottery from './pages/TypeLottery'
+
 export default function Router() {
   const Layout = () => {
     return (
       <div className="flex">
         <SlideBar />
-        <div className="flex flex-col w-full ml-[240px]">
+        <div
+          className="flex flex-col w-full
+        transition-all duration-300
+        md:ml-[240px]"
+        >
           <Calender />
           <div className="p-3 pt-0 mt-12">
             <Outlet />
@@ -33,7 +40,7 @@ export default function Router() {
   }
 
   const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
 
     if (!token) {
       return <Navigate to="/login" replace />

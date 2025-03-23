@@ -1,17 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { betApi, globalApi } from "@/apis";
-import BetDetailComp from "@/components/bet/BetDetail";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { DateContext } from "@/contexts/DateContext";
-import { SettingContext } from "@/contexts/SettingContext";
-import { PATHS } from "@/utils/constants";
+import { betApi, globalApi } from '@/apis'
+import BetDetailComp from '@/components/bet/BetDetail'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
+import { DateContext } from '@/contexts/DateContext'
+import { SettingContext } from '@/contexts/SettingContext'
+import { PATHS } from '@/utils/constants'
 import {
   IBetResultDetailInner,
   IProvince,
   IRule,
   IStatistic,
-} from "@/utils/interface";
+} from '@/utils/interface'
 import {
   calculateStatistic,
   calculateStatisticMatched,
@@ -19,148 +19,148 @@ import {
   checkProvince,
   checkRule,
   transferBet,
-} from "@/utils/string";
-import { DateContextType, SettingContextType } from "@/utils/types";
-import { useContext, useEffect, useState } from "react";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { IoMdSave } from "react-icons/io";
-import { useLocation } from "react-router-dom";
+} from '@/utils/string'
+import { DateContextType, SettingContextType } from '@/utils/types'
+import { useContext, useEffect, useState } from 'react'
+import { FaRegTrashAlt } from 'react-icons/fa'
+import { IoMdSave } from 'react-icons/io'
+import { useLocation } from 'react-router-dom'
 
 const tabs = [
   {
-    value: "Tin nhắn",
+    value: 'Tin nhắn',
     key: 1,
   },
   {
-    value: "Xử lý tin nhắn",
+    value: 'Xử lý tin nhắn',
     key: 2,
   },
   {
-    value: "Hệ số",
+    value: 'Hệ số',
     key: 3,
   },
   {
-    value: "Nhiều SMS",
+    value: 'Nhiều SMS',
     key: 4,
   },
   {
-    value: "Số trúng",
+    value: 'Số trúng',
     key: 5,
   },
-];
+]
 
 const BetDetail = () => {
-  const location = useLocation();
+  const location = useLocation()
 
-  const [tab, setTab] = useState(tabs[0]);
-  const [showDetail, setShowDetail] = useState(false);
-  const { toast } = useToast();
-  const { date } = useContext(DateContext) as DateContextType;
-  const { provinces, rules } = useContext(SettingContext) as SettingContextType;
-  const [bet, setBet] = useState<IBetResultDetailInner | null>(null);
-  const [pointRaw, setPointRaw] = useState<IStatistic[]>([]);
-  const [pointMiddle, setPointMiddle] = useState<IStatistic[]>([]);
-  const [pointMatched, setPointMatched] = useState<IStatistic[]>([]);
-  const [ruleError, setRuleError] = useState<string[]>([]);
-  const [provinceError, setProvinceError] = useState<string[]>([]);
-  const [region, setRegion] = useState("");
-  const [validProvince, setValidProvince] = useState<IProvince[]>([]);
-  const [rulesGlobal, setRulesGlobal] = useState<IRule[]>([]);
+  const [tab, setTab] = useState(tabs[0])
+  const [showDetail, setShowDetail] = useState(false)
+  const { toast } = useToast()
+  const { date } = useContext(DateContext) as DateContextType
+  const { provinces, rules } = useContext(SettingContext) as SettingContextType
+  const [bet, setBet] = useState<IBetResultDetailInner | null>(null)
+  const [pointRaw, setPointRaw] = useState<IStatistic[]>([])
+  const [pointMiddle, setPointMiddle] = useState<IStatistic[]>([])
+  const [pointMatched, setPointMatched] = useState<IStatistic[]>([])
+  const [ruleError, setRuleError] = useState<string[]>([])
+  const [provinceError, setProvinceError] = useState<string[]>([])
+  const [region, setRegion] = useState('')
+  const [validProvince, setValidProvince] = useState<IProvince[]>([])
+  const [rulesGlobal, setRulesGlobal] = useState<IRule[]>([])
 
   const getRules = async () => {
     try {
-      const response = await globalApi.GetAllRule();
+      const response = await globalApi.GetAllRule()
       if (response) {
-        const { data } = response;
+        const { data } = response
         if (data.data) {
-          setRulesGlobal(response.data.data);
+          setRulesGlobal(response.data.data)
         } else {
-          setRulesGlobal([]);
+          setRulesGlobal([])
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   useEffect(() => {
-    getRules();
-  }, []);
+    getRules()
+  }, [])
 
   const handleAddBet = async () => {
     try {
-      if ((ruleError.length > 0 || provinceError.length > 0) && content != "") {
+      if ((ruleError.length > 0 || provinceError.length > 0) && content != '') {
         toast({
-          variant: "destructive",
-          title: "Lỗi nhập liệu",
-        });
-        return;
+          variant: 'destructive',
+          title: 'Lỗi nhập liệu',
+        })
+        return
       }
 
-      const bet_id = location.pathname.split("/").pop();
-      const agency_id = location.search.split("=")[1];
+      const bet_id = location.pathname.split('/').pop()
+      const agency_id = location.search.split('=')[1]
 
-      let contentTransfer = content.replace(/,/g, ".");
+      let contentTransfer = content.replace(/,/g, '.')
 
       const province_acronym = bet?.province_acronym.map(
         (item) => item.acronym
-      )[0];
+      )[0]
 
-      if (region === "north" && content != "") {
+      if (region === 'north' && content != '') {
         //check content has province_acronym
         contentTransfer = contentTransfer
           .split(/\n/)
           .map((item) => {
             if (item.includes(province_acronym!)) {
-              return item;
+              return item
             } else {
-              return province_acronym! + " " + item;
+              return province_acronym! + ' ' + item
             }
           })
-          .join("\n");
+          .join('\n')
       }
 
       let data: {
-        agency_id: number;
-        open_date: string;
-        region_unique_key: string;
-        bets: string[];
-        bet_id?: number;
+        agency_id: number
+        open_date: string
+        region_unique_key: string
+        bets: string[]
+        bet_id?: number
       } = {
         agency_id: Number(agency_id),
-        open_date: date?.toISOString().split("T")[0] || "",
+        open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key: region,
         bets: transferBet(provinces, contentTransfer),
-      };
-      if (bet_id && bet_id !== "-1") {
+      }
+      if (bet_id && bet_id !== '-1') {
         data = {
           ...data,
           bet_id: Number(bet_id),
-        };
+        }
       }
 
-      const response = await betApi.CreateBet(data);
+      const response = await betApi.CreateBet(data)
       if (response) {
-        const { data } = response;
+        const { data } = response
         if (data) {
-          let responseStatus = data.status;
+          let responseStatus = data.status
           if (responseStatus == 200) {
             toast({
-              title: "Thành công",
-              variant: "success",
-            });
+              title: 'Thành công',
+              variant: 'success',
+            })
             if (data.data.id) {
-              const path = location.pathname.split("/");
-              path[path.length - 1] = data.bet_id?.toString() || "";
+              const path = location.pathname.split('/')
+              path[path.length - 1] = data.bet_id?.toString() || ''
               const newPath =
-                path.join("/") + data.data.id + `?agency_id=${agency_id}`;
-              window.location.replace(newPath);
+                path.join('/') + data.data.id + `?agency_id=${agency_id}`
+              window.location.replace(newPath)
             }
           } else {
             toast({
-              variant: "destructive",
+              variant: 'destructive',
               title: data.error,
-            });
+            })
           }
 
           //repalace -1 to data.data.id
@@ -176,46 +176,46 @@ const BetDetail = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
       toast({
-        variant: "destructive",
-        title: "Lỗi nhập liệu",
-      });
+        variant: 'destructive',
+        title: 'Lỗi nhập liệu',
+      })
     }
-  };
+  }
 
   const getBet = async () => {
     try {
-      let region_unique_key = "";
+      let region_unique_key = ''
       if (location.pathname.includes(PATHS.MIEN_BAC)) {
-        region_unique_key = "north";
+        region_unique_key = 'north'
       } else if (location.pathname.includes(PATHS.MIEN_TRUNG)) {
-        region_unique_key = "central";
+        region_unique_key = 'central'
       } else if (location.pathname.includes(PATHS.MIEN_NAM)) {
-        region_unique_key = "south";
+        region_unique_key = 'south'
       }
-      setRegion(region_unique_key);
+      setRegion(region_unique_key)
       if (bet?.province_acronym) {
         for (let i = 0; i < bet.province_acronym.length; i++) {
           const province = provinces.find(
             (province) => province.acronym === bet.province_acronym[i].acronym
-          );
+          )
           if (province) {
-            validProvince.push(province);
+            validProvince.push(province)
           }
         }
       }
 
-      if (region_unique_key === "") {
-        return;
+      if (region_unique_key === '') {
+        return
       }
 
       const response = await betApi.GetBets({
-        open_date: date?.toISOString().split("T")[0] || "",
+        open_date: date?.toISOString().split('T')[0] || '',
         region_unique_key,
-        agency_id: location.search.split("=")[1],
-      });
-      const { data } = response;
+        agency_id: location.search.split('=')[1],
+      })
+      const { data } = response
       if (data && data.data !== null) {
         if (Array.isArray(response.data.data)) {
           setBet({
@@ -223,109 +223,116 @@ const BetDetail = () => {
             province_acronym: response.data.data,
             statistic: [],
             win: [],
-          });
+          })
         } else {
-          setBet(data.data);
+          setBet(data.data)
         }
       } else {
-        setBet(null);
+        setBet(null)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   useEffect(() => {
-    if (location.search.split("=")[1] && date) {
-      getBet();
+    if (location.search.split('=')[1] && date) {
+      getBet()
     }
-  }, [date]);
+  }, [date])
 
   const createEmptyStatistic = (rules: IRule[]): IStatistic[] =>
     (rules || []).map((rule) => ({
       rule: rule.rule_unique_key,
       score: 0,
       money: 0,
-    }));
+    }))
 
   useEffect(() => {
-    const emptyStatistics = createEmptyStatistic(rulesGlobal);
+    const emptyStatistics = createEmptyStatistic(rulesGlobal)
     if (bet) {
-      const statisticRaw = bet?.statistic || [];
-      const flattenedRaw = statisticRaw.flat();
-      const statisticFilled = calculateStatistic(rulesGlobal, flattenedRaw);
-      setPointRaw(statisticFilled);
+      const statisticRaw = bet?.statistic || []
+      const flattenedRaw = statisticRaw.flat()
+      const statisticFilled = calculateStatistic(rulesGlobal, flattenedRaw)
+      setPointRaw(statisticFilled)
       const statisticReceived = calculateStatisticReceived(
         rulesGlobal,
         flattenedRaw
-      );
-      setPointMiddle(statisticReceived);
+      )
+      setPointMiddle(statisticReceived)
 
-      const statisticWin = bet?.win || [];
+      const statisticWin = bet?.win || []
 
       const statisticMatched = calculateStatisticMatched(
         rulesGlobal,
         statisticWin
-      );
-      setPointMatched(statisticMatched);
+      )
+      setPointMatched(statisticMatched)
     } else {
-      setPointRaw(emptyStatistics);
-      setPointMiddle(emptyStatistics);
-      setPointMatched(emptyStatistics);
+      setPointRaw(emptyStatistics)
+      setPointMiddle(emptyStatistics)
+      setPointMatched(emptyStatistics)
     }
-  }, [bet]);
+  }, [bet])
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('')
   useEffect(() => {
     if (bet && bet.bets.length > 0) {
       if (tab.key === 1) {
-        setContent(bet?.bets[0].bets.map((item) => item).join("\n"));
+        setContent(bet?.bets[0].bets.map((item) => item).join('\n'))
       } else if (tab.key === 2) {
-        setContent(bet?.bets[0].bets.map((item) => item).join(" "));
+        setContent(bet?.bets[0].bets.map((item) => item).join(' '))
       } else if (tab.key === 3 || tab.key === 4) {
-        setContent("");
+        setContent('')
       } else if (tab.key === 5) {
         setContent(
           bet.win
             .map((item) => {
               if (item.score > 1) {
-                return item.bet_win;
+                return item.bet_win
               }
-              return item.bet_win;
+              return item.bet_win
             })
-            .join(";")
-        );
+            .join(';')
+        )
       }
     } else {
-      setContent("");
+      setContent('')
     }
-  }, [tab, bet]);
+  }, [tab, bet])
   useEffect(() => {
     if (tab.key === 1) {
-      if (!location.pathname.includes(PATHS.MIEN_BAC)) {
-        setProvinceError(checkProvince(provinces, content.trim(), rules));
+      if (
+        !location.pathname.includes(PATHS.MIEN_BAC) &&
+        bet?.province_acronym
+      ) {
+        setProvinceError(
+          checkProvince(bet?.province_acronym!, content.trim(), rules)
+        )
       }
-      setRuleError(checkRule(rules, content.trim()));
+      setRuleError(checkRule(rules, content.trim()))
     }
-  }, [content]);
+  }, [content])
 
   rules.push(
     {
-      acronym: "hang",
+      acronym: 'hang',
       rule_id: 0,
-      rule_name: "Hàng",
+      rule_name: 'Hàng',
     },
     {
-      acronym: "keo",
+      acronym: 'keo',
       rule_id: 0,
-      rule_name: "Kéo",
+      rule_name: 'Kéo',
     },
     {
-      acronym: "dit",
+      acronym: 'dit',
       rule_id: 0,
-      rule_name: "Đít",
+      rule_name: 'Đít',
     }
-  );
+  )
+
+  console.log(bet)
 
   return (
     <div>
@@ -338,7 +345,7 @@ const BetDetail = () => {
             >
               {city.acronym}: {city.name}
             </span>
-          );
+          )
         })}
       </div>
       <div className="mt-4 space-x-1">
@@ -347,7 +354,7 @@ const BetDetail = () => {
             key={item.key}
             onClick={() => setTab(item)}
             className={`${
-              tab.key === item.key ? "bg-[#1479B8]" : "bg-disable"
+              tab.key === item.key ? 'bg-[#1479B8]' : 'bg-disable'
             } text-white px-2 h-fit rounded-lg`}
           >
             {item.value}
@@ -356,7 +363,7 @@ const BetDetail = () => {
       </div>
       <textarea
         className={`w-full h-40 border border-gray-400 p-2 resize-vertical ${
-          tab.key === 5 ? "text-main" : ""
+          tab.key === 5 ? 'text-main' : ''
         }`}
         disabled={tab.key !== 1}
         onChange={(e) => setContent(e.target.value)}
@@ -365,19 +372,19 @@ const BetDetail = () => {
       <p>
         {content.split(/\s+/).map((item, index) => {
           const isRuleError =
-            Array.isArray(ruleError) && ruleError.includes(item);
+            Array.isArray(ruleError) && ruleError.includes(item)
           const isProvinceError =
-            Array.isArray(provinceError) && provinceError.includes(item);
+            Array.isArray(provinceError) && provinceError.includes(item)
           return (
             <span
               key={index}
               className={`${
-                isRuleError || isProvinceError ? "text-red-500 font-bold" : ""
+                isRuleError || isProvinceError ? 'text-red-500 font-bold' : ''
               }`}
             >
-              {item}{" "}
+              {item}{' '}
             </span>
-          );
+          )
         })}
       </p>
 
@@ -398,7 +405,7 @@ const BetDetail = () => {
               >
                 {item.bet_win}
               </span>
-            );
+            )
           })}
         </div>
       )}
@@ -411,7 +418,7 @@ const BetDetail = () => {
       />
       <div className="flex justify-between items-center">
         <Button
-          onClick={() => setContent("")}
+          onClick={() => setContent('')}
           className="hover:bg-[#d58512] bg-[#f0ad4e] rounded-3xl py-1 h-fit"
         >
           <FaRegTrashAlt />
@@ -432,7 +439,7 @@ const BetDetail = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BetDetail;
+export default BetDetail

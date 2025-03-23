@@ -162,14 +162,14 @@ const BetDetailComp = ({
           </div>
         )}
 
-      <div className="py-1 pl-1 grid grid-cols-3 text-main">
-        <strong className="text-black ml-12">
+      <div className="py-1 pl-1 grid grid-cols-3 bg-blue-600 text-white text-lg">
+        <strong className="ml-12">
           : {pointRaw.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
         </strong>
-        <strong className="text-black ml-12">
+        <strong className="ml-12">
           : {pointMiddle.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
         </strong>
-        <strong className="text-black ml-12">
+        <strong className="ml-12">
           : {pointMatched.reduce((acc, val) => acc + val.money, 0).toFixed(1)}
         </strong>
       </div>
@@ -188,7 +188,11 @@ const BetDetailComp = ({
             finalResult >= 0 ? 'border-black' : 'border-main'
           }`}
         >
-          <span className={`${finalResult >= 0 ? 'text-black' : 'text-main'}`}>
+          <span
+            className={`${
+              finalResult >= 0 ? 'text-black' : 'text-main'
+            } text-lg`}
+          >
             {Math.abs(finalResult)} ({finalResult >= 0 ? 'Lỗ' : 'Lời'})
           </span>
           <TbLogout

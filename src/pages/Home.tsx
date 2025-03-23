@@ -122,13 +122,15 @@ const Home = () => {
               </div>
               <div>
                 <Link
-                  to={`/mien-nam?agency_id=${agency.id}`}
+                  to={`/mien-bac?agency_id=${agency.id}`}
                   onClick={() => updateAgency(agency)}
                   className={`${
-                    bet.is_have_bet_south ? 'bg-main' : 'bg-disable'
+                    bet.is_have_bet_north ? 'bg-main' : 'bg-disable'
+                  } ${
+                    !bet.is_have_bet_north ? 'cursor-default' : ''
                   } cursor-pointer p-[12px_5px] float-right m-[1px_4px_4px_4px] rounded-full text-[6px] h-8 w-8 text-white text-center leading-[8px] shadow-md shadow-black`}
                 >
-                  Nam
+                  Bắc
                   <span className="block">1</span>
                 </Link>
                 <Link
@@ -143,16 +145,15 @@ const Home = () => {
                   Trung
                   <span className="block">1</span>
                 </Link>
+
                 <Link
-                  to={`/mien-bac?agency_id=${agency.id}`}
+                  to={`/mien-nam?agency_id=${agency.id}`}
                   onClick={() => updateAgency(agency)}
                   className={`${
-                    bet.is_have_bet_north ? 'bg-main' : 'bg-disable'
-                  } ${
-                    !bet.is_have_bet_north ? 'cursor-default' : ''
+                    bet.is_have_bet_south ? 'bg-main' : 'bg-disable'
                   } cursor-pointer p-[12px_5px] float-right m-[1px_4px_4px_4px] rounded-full text-[6px] h-8 w-8 text-white text-center leading-[8px] shadow-md shadow-black`}
                 >
-                  Bắc
+                  Nam
                   <span className="block">1</span>
                 </Link>
               </div>
