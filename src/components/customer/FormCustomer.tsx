@@ -63,8 +63,6 @@ const FormAgency = () => {
     }
   }
 
-  console.log(south)
-
   useEffect(() => {
     getRule()
   }, [])
@@ -81,6 +79,46 @@ const FormAgency = () => {
     const { data } = response
     if (data && data.data) {
       setAgencyCreate(data.data)
+
+      //set coefficient
+      const objSouth: ICoefficient = {}
+      const objMiddle: ICoefficient = {}
+      const objNorth: ICoefficient = {}
+
+      data.data.agency_pays.map((item: any) => {
+        if (item.region_id === 3) {
+          objSouth[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 2) {
+          objMiddle[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 1) {
+          objNorth[item.Rule.rule_unique_key] = item.coefficient
+        }
+      })
+
+      const objRevenueSouth: ICoefficient = {}
+      const objRevenueMiddle: ICoefficient = {}
+      const objRevenueNorth: ICoefficient = {}
+
+      data.data.agency_revenues.map((item: any) => {
+        if (item.region_id === 3) {
+          objRevenueSouth[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 2) {
+          objRevenueMiddle[item.Rule.rule_unique_key] = item.coefficient
+        }
+        if (item.region_id === 1) {
+          objRevenueNorth[item.Rule.rule_unique_key] = item.coefficient
+        }
+      })
+
+      setPaySouth(objSouth)
+      setPayMiddle(objMiddle)
+      setPayNorth(objNorth)
+      setRevenueSouth(objRevenueSouth)
+      setRevenueMiddle(objRevenueMiddle)
+      setRevenueNorth(objRevenueNorth)
     }
   }
 
@@ -141,11 +179,12 @@ const FormAgency = () => {
         agency_pay,
         agency_revenue,
       }
+      console.log(finalData)
       //Nội dung Tên, Số Phone không có chứa ký tự như: &apos;, &quot;, *, /,
       // &, #, [, ], &lt;, &gt;, =, @, !, -
       //regex name
       const regexName = /^[a-zA-Z0-9 ]+$/
-      if (!regexName.test(agencyCreate.name)) {
+      if (!regexName.test(agencyCreate.agency_name)) {
         toast({
           variant: 'destructive',
           title: 'Chứa các ký tự không cho phép',
@@ -154,36 +193,43 @@ const FormAgency = () => {
         return
       }
 
-      //regex phone
-      const regexPhone = /^[0-9]+$/
-      if (!regexPhone.test(agencyCreate.phone)) {
-        toast({
-          variant: 'destructive',
-          title: 'Số phone chứa các ký tự không cho phép',
-        })
-        setLoading(false)
-        return
-      }
+      // //regex phone
+      // const regexPhone = /^[0-9]+$/
+      // if (!regexPhone.test(agencyCreate.phone)) {
+      //   toast({
+      //     variant: 'destructive',
+      //     title: 'Số phone chứa các ký tự không cho phép',
+      //   })
+      //   setLoading(false)
+      //   return
+      // }
 
+      let response
+      if (search.includes('agency_id')) {
+        response = await agencyApi.UpdateAgency(search.split('=')[1], finalData)
+      } else {
+        response = await agencyApi.CreateAgency(finalData)
+      }
       // Call API to save agency
-      const response = await agencyApi.CreateAgency(finalData)
       const { data, status } = response
       if (status === 200) {
         toast({
           variant: 'success',
           title: 'Thành công',
         })
-        setAgencyCreate(initState)
-        const obj: ICoefficient = {}
-        rule.map((item: IRule) => {
-          obj[item.rule_unique_key] = '0'
-        })
-        setPaySouth(obj)
-        setPayMiddle(obj)
-        setPayNorth(obj)
-        setRevenueSouth(obj)
-        setRevenueMiddle(obj)
-        setRevenueNorth(obj)
+        if (!search.includes('agency_id')) {
+          setAgencyCreate(initState)
+          const obj: ICoefficient = {}
+          rule.map((item: IRule) => {
+            obj[item.rule_unique_key] = '0'
+          })
+          setPaySouth(obj)
+          setPayMiddle(obj)
+          setPayNorth(obj)
+          setRevenueSouth(obj)
+          setRevenueMiddle(obj)
+          setRevenueNorth(obj)
+        }
       }
 
       if (status === 400) {
@@ -211,9 +257,6 @@ const FormAgency = () => {
       {/* Header */}
       <div className="bg-pink-600 text-white p-3 flex justify-between items-center">
         <span className="text-lg font-semibold">THÔNG TIN KHÁCH HÀNG</span>
-        <span className="flex items-center gap-2">
-          <span>📅 28-02-2018</span>
-        </span>
       </div>
 
       <div className="bg-white shadow-md rounded-lg m-4 p-4 border border-gray-200">

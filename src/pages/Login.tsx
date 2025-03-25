@@ -79,6 +79,8 @@ export default function Login() {
         variant: 'destructive',
         title: 'Thất bại',
       })
+      setLoading(false)
+
       return
     }
   }

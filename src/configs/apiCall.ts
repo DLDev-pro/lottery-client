@@ -33,6 +33,11 @@ axiosPublic.interceptors.request.use(
 
 axiosPublic.interceptors.response.use(
   function (res: AxiosResponse<TResponseData>) {
+    const { data } = res
+    if (data.status == 401 || data.status === 401 || data.status === 509) {
+      autoLogout()
+      return Promise.reject(new Error('Unauthorized or Session Expired'))
+    }
     return res
   },
   async function (e: AxiosError<TResponseError>) {
@@ -42,7 +47,6 @@ axiosPublic.interceptors.response.use(
         data: { message, code, detail },
         status,
       } = response
-
       if (code == 401 || status === 401 || status === 509) {
         autoLogout()
         return

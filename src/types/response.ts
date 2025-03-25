@@ -2,6 +2,7 @@ export type TResponseData<T = unknown> = {
   data?: T
   message: string
   code: number
+  status: number
   page?: number
   limit?: number
   total?: number
