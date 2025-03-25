@@ -1,3 +1,4 @@
+import { globalApi } from '@/apis'
 import {
   Select,
   SelectContent,
@@ -83,8 +84,22 @@ const ResultCustomer = () => {
     }
   }
 
-  const handleSubmit = (e: FormSubmit) => {
+  console.log(
+    startDate.toISOString().split('T')[0],
+    endDate.toISOString().split('T')[0]
+  )
+  const handleSubmit = async (e: FormSubmit) => {
     e.preventDefault()
+    try {
+      const response = await globalApi.GetCustomerResult(
+        startDate.toISOString().split('T')[0],
+        endDate.toISOString().split('T')[0]
+      )
+      console.log(response.data)
+      // setDatas(response.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

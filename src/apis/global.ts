@@ -33,8 +33,28 @@ const UpdateSetting = async (data: unknown) => {
 }
 
 const GetLotteryResult = async (data: any) => {
-  const response = await apiCaller('GET', `${PATH}lottery-result?date=${data.date}&region_unique_key=${data.region}`, data)
+  const response = await apiCaller(
+    'GET',
+    `${PATH}lottery-result?date=${data.date}&region_unique_key=${data.region}`,
+    data
+  )
   return response
 }
 
-export { GetRegion, GetLotterySchedule, GetSetting, UpdateSetting, GetAllRule, GetLotteryResult }
+const GetCustomerResult = async (from: string, to: string) => {
+  const response = await apiCaller(
+    'GET',
+    `${PATH}agency-analytics?from=${from}&to=${to}`
+  )
+  return response
+}
+
+export {
+  GetRegion,
+  GetLotterySchedule,
+  GetSetting,
+  UpdateSetting,
+  GetAllRule,
+  GetLotteryResult,
+  GetCustomerResult,
+}

@@ -1,6 +1,4 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
-import { createBrowserRouter } from 'react-router-dom'
-import { lazy } from 'react'
 
 import { Toaster } from '@/components/ui/toaster'
 import Home from '@/pages/Home'

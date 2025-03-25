@@ -86,6 +86,7 @@ const BetDetailComp = ({
                 </Link>
               )}
           </div>
+
           {!location.pathname.includes('dat-cuoc') && (
             <p>
               <span className="text-blue-500 font-bold">{index + 1}) </span>
@@ -206,5 +207,3 @@ const BetDetailComp = ({
 }
 
 export default BetDetailComp
-
-// tn 13 dd5n; ag 46 baolo5n; tn 54 baolo7n; ag 54 baolo7n; tn 56 baolo5n; tn 72 baolo10n; tn 56 baolo5n; ag 56 baolo5n; tn 35 baolo5n; tn 49 baolo5n; tn 94 baolo5n; ag 94 baolo5n; bth 50 baolo5n; tn 38 baolo5n; tn 13 baolo5n; tn 25 baolo5n; tn 99 baolo5n; bth 39 baolo5n; tn 23 baolo5n; tn 72 baolo2n; tn 54 baolo2n; tn 38 baolo10n; ag 71 baolo50n; tn 35-75 Đá3n; tn 68-72 Đá5n; tn 54-94 Đá1n; tn 68 duoi30n; tn-ag 31-54 ĐáX3n; tn-ag 90-23 ĐáX1n;
