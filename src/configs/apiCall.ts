@@ -43,7 +43,7 @@ axiosPublic.interceptors.response.use(
         status,
       } = response
 
-      if (code == 401 || status === 401) {
+      if (code == 401 || status === 401 || status === 509) {
         autoLogout()
         return
       }

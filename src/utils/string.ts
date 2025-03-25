@@ -124,9 +124,11 @@ export const checkProvince = (
   const acronyms = provinces.map((p) => p.acronym)
 
   const numberOfProvinces = provinces.length
-  if (numberOfProvinces >= 2 && numberOfProvinces <= 4) {
-    acronyms.push(`${numberOfProvinces}dai`)
-  }
+  const additionalAcronyms =
+    numberOfProvinces > 1
+      ? Array.from({ length: numberOfProvinces - 1 }, (_, i) => `${i + 2}dai`)
+      : []
+  acronyms.push(...additionalAcronyms)
 
   const provincesFromBet = getProvincesFromBet(bet, rules)
   return provincesFromBet.filter((item) => !acronyms.includes(item))
