@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useToast } from "../ui/use-toast";
 import FormInput from "./FormInput";
+import { DEFAULT_DRAFT_AGENCY_ID, PATHS } from "@/utils/constants";
 
 const FormAgency = () => {
   const { central, north, south } = useContext(
@@ -129,6 +130,10 @@ const FormAgency = () => {
         // setAgencyCreate(agency)
         getDetail(agencyId);
       }
+    } else {
+      getDetail(DEFAULT_DRAFT_AGENCY_ID);
+      agencyCreate.id = -1;
+      agencyCreate.agency_name = "";
     }
   }, [search]);
 
@@ -232,6 +237,7 @@ const FormAgency = () => {
           setRevenueSouth(obj);
           setRevenueMiddle(obj);
           setRevenueNorth(obj);
+          window.location.href = PATHS.KHACH_HANG;
         }
       }
 

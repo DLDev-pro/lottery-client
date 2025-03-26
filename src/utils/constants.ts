@@ -25,3 +25,4 @@ export const PATHS = {
 }
 
 export const ID_NEGATIVE = -1
+export const DEFAULT_DRAFT_AGENCY_ID = "11"
