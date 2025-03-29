@@ -17,7 +17,7 @@ import { selectSearch } from '@/utils/data'
 import { IAnalysis } from '@/utils/interface'
 import { FormSubmit } from '@/utils/types'
 import { SelectValue } from '@radix-ui/react-select'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 
 const ResultCustomer = () => {
@@ -25,27 +25,37 @@ const ResultCustomer = () => {
   const [endDate, setEndDate] = useState(new Date())
   const [type, setType] = useState(selectSearch[0])
   const [datas, setDatas] = useState<IAnalysis[]>([])
-  const [tab, setTab] = useState(1)
 
   const totalNorth = useMemo(() => {
     return datas.reduce((acc, val) => {
-      return acc + val.totalNorth
+      const north = val.analytics_details.find(
+        (item) => item.region_unique_key === 'north'
+      )
+      return acc + (north?.total || 0)
     }, 0)
   }, [datas])
 
   const totalCentral = useMemo(() => {
     return datas.reduce((acc, val) => {
-      return acc + val.totalCentral
+      const central = val.analytics_details.find(
+        (item) => item.region_unique_key === 'central'
+      )
+      return acc + (central?.total || 0)
     }, 0)
   }, [datas])
 
   const totalSouth = useMemo(() => {
     return datas.reduce((acc, val) => {
-      return acc + val.totalSouth
+      const south = val.analytics_details.find(
+        (item) => item.region_unique_key === 'south'
+      )
+      return acc + (south?.total || 0)
     }, 0)
   }, [datas])
 
-  const total = totalNorth + totalCentral + totalSouth
+  const total = useMemo(() => {
+    return totalNorth + totalCentral + totalSouth
+  }, [totalNorth, totalCentral, totalSouth])
 
   const changeDate = (tab: number) => {
     const today = new Date()
@@ -63,7 +73,6 @@ const ResultCustomer = () => {
     const endOfLastWeek = new Date(startOfLastWeek)
     endOfLastWeek.setDate(endOfLastWeek.getDate() + 6) // Sunday of the last week
 
-    setTab(tab)
     switch (tab) {
       case 1:
         setStartDate(today)
@@ -84,22 +93,31 @@ const ResultCustomer = () => {
     }
   }
 
-  console.log(
-    startDate.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
-  )
-  const handleSubmit = async (e: FormSubmit) => {
-    e.preventDefault()
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const getData = async () => {
     try {
       const response = await globalApi.GetCustomerResult(
         startDate.toISOString().split('T')[0],
         endDate.toISOString().split('T')[0]
       )
-      console.log(response.data)
-      // setDatas(response.data)
+      const { data } = response
+
+      if (data && data.data.length > 0) {
+        setDatas(data.data)
+      } else {
+        setDatas([])
+      }
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const handleSubmit = async (e: FormSubmit) => {
+    e.preventDefault()
+    await getData()
   }
 
   return (
@@ -178,6 +196,13 @@ const ResultCustomer = () => {
         >
           Tuần trước
         </button>
+        <div className="flex items-center gap-2 mt-2">
+          <p className="text-xs bg-blue-500 px-2 py-1 text-white h-fit">Tổng</p>
+          <p className="text-xs bg-green-500 px-2 py-1 text-white h-fit">
+            Thực tế
+          </p>
+          <p className="text-xs bg-main px-2 py-1 text-white h-fit">Thắng</p>
+        </div>
       </div>
       <Table>
         <TableHeader>
@@ -203,41 +228,88 @@ const ResultCustomer = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {datas.map((customer, index) => {
-            const total =
-              customer.totalNorth + customer.totalCentral + customer.totalSouth
-            const color = index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
-            return (
-              <TableRow
-                key={index}
-                className={`${color} hover:bg-gray-200 cursor-default`}
-              >
-                <TableCell className="text-center">{index + 1}</TableCell>
-                <TableCell className="text-left">
-                  {customer.customer.name}
-                </TableCell>
-                <TableCell className="text-right border-r">
-                  {customer.totalNorth}
-                </TableCell>
-                <TableCell className="text-right border-r">
-                  {customer.totalCentral}
-                </TableCell>
-                <TableCell className="text-right border-r">
-                  {customer.totalSouth}
-                </TableCell>
-                <TableCell className="text-right">{total}</TableCell>
-              </TableRow>
+          {datas
+            .sort((a, b) =>
+              a.agency_name.localeCompare(b.agency_name, 'en', {
+                numeric: true,
+              })
             )
-          })}
-          <TableRow className={` hover:bg-gray-200 cursor-default`}>
+            .map((customer, index) => {
+              const color = index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+              const north = customer.analytics_details.find(
+                (item) => item.region_unique_key === 'north'
+              )
+              const central = customer.analytics_details.find(
+                (item) => item.region_unique_key === 'central'
+              )
+              const south = customer.analytics_details.find(
+                (item) => item.region_unique_key === 'south'
+              )
+
+              const totalRaw =
+                (north?.total || 0) +
+                (central?.total || 0) +
+                (south?.total || 0)
+              const totalActual =
+                (north?.actual || 0) +
+                (central?.actual || 0) +
+                (south?.actual || 0)
+              const totalWin =
+                (north?.win || 0) + (central?.win || 0) + (south?.win || 0)
+
+              return (
+                <TableRow
+                  key={index}
+                  className={`${color} hover:bg-gray-200 cursor-default`}
+                >
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-left">
+                    {customer.agency_name}
+                  </TableCell>
+                  <TableCell className="text-right border-r font-bold">
+                    {/* {customer.totalNorth} */}
+                    <p className="text-blue-500">{north?.total.toFixed(1)}</p>
+                    <p className="text-green-500">{north?.actual.toFixed(1)}</p>
+                    <p className="text-main">{north?.win.toFixed(1)}</p>
+                  </TableCell>
+                  <TableCell className="text-right border-r font-bold">
+                    <p className="text-blue-500">{central?.total.toFixed(1)}</p>
+                    <p className="text-green-500">
+                      {central?.actual.toFixed(1)}
+                    </p>
+                    <p className="text-main">{central?.win.toFixed(1)}</p>
+                  </TableCell>
+
+                  <TableCell className="text-right border-r font-bold">
+                    {/* {customer.totalSouth} */}
+                    <p className="text-blue-500">{south?.total.toFixed(1)}</p>
+                    <p className="text-green-500">{south?.actual.toFixed(1)}</p>
+                    <p className="text-main">{south?.win.toFixed(1)}</p>
+                  </TableCell>
+
+                  <TableCell className="text-right font-bold">
+                    <p className="text-blue-500">{totalRaw.toFixed(1)}</p>
+                    <p className="text-green-500">{totalActual.toFixed(1)}</p>
+                    <p className="text-main">{totalWin.toFixed(1)}</p>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          <TableRow
+            className={` hover:bg-gray-200 cursor-default text-main font-bold`}
+          >
             <TableCell></TableCell>
             <TableCell></TableCell>
-            <TableCell className="text-right border-r">{totalNorth}</TableCell>
             <TableCell className="text-right border-r">
-              {totalCentral}
+              {totalNorth.toFixed(1)}
             </TableCell>
-            <TableCell className="text-right border-r">{totalSouth}</TableCell>
-            <TableCell className="text-right">{total}</TableCell>
+            <TableCell className="text-right border-r">
+              {totalCentral.toFixed(1)}
+            </TableCell>
+            <TableCell className="text-right border-r">
+              {totalSouth.toFixed(1)}
+            </TableCell>
+            <TableCell className="text-right">{total.toFixed(1)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

@@ -55,11 +55,8 @@ export interface IBetDetail {
   key: string
 }
 
-export interface IAnalysis extends IBase {
-  customer: IAgency
-  totalSouth: number
-  totalCentral: number
-  totalNorth: number
+export interface IAnalysis extends IAgency {
+  analytics_details: Analysis[]
 }
 
 export interface IAgency extends IBase {
@@ -70,6 +67,13 @@ export interface IAgency extends IBase {
   name: string
   password: string
   phone: string
+}
+
+export interface Analysis {
+  region_unique_key: string
+  total: number
+  actual: number
+  win: number
 }
 
 export interface AgencyElement {
