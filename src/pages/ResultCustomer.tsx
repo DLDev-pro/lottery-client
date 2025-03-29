@@ -31,7 +31,8 @@ const ResultCustomer = () => {
       const north = val.analytics_details.find(
         (item) => item.region_unique_key === 'north'
       )
-      return acc + (north?.total || 0)
+      const result = (north?.actual || 0) - (north?.win || 0)
+      return acc + result
     }, 0)
   }, [datas])
 
@@ -40,7 +41,8 @@ const ResultCustomer = () => {
       const central = val.analytics_details.find(
         (item) => item.region_unique_key === 'central'
       )
-      return acc + (central?.total || 0)
+      const result = (central?.actual || 0) - (central?.win || 0)
+      return acc + result
     }, 0)
   }, [datas])
 
@@ -49,7 +51,8 @@ const ResultCustomer = () => {
       const south = val.analytics_details.find(
         (item) => item.region_unique_key === 'south'
       )
-      return acc + (south?.total || 0)
+      const result = (south?.actual || 0) - (south?.win || 0)
+      return acc + result
     }, 0)
   }, [datas])
 
@@ -100,8 +103,10 @@ const ResultCustomer = () => {
   const getData = async () => {
     try {
       const response = await globalApi.GetCustomerResult(
-        startDate.toISOString().split('T')[0],
-        endDate.toISOString().split('T')[0]
+        // startDate.toISOString().split('T')[0],
+        // endDate.toISOString().split('T')[0]
+        '2023-03-27',
+        '2025-03-28'
       )
       const { data } = response
 
@@ -301,15 +306,17 @@ const ResultCustomer = () => {
             <TableCell></TableCell>
             <TableCell></TableCell>
             <TableCell className="text-right border-r">
-              {totalNorth.toFixed(1)}
+              {totalNorth.toFixed(1)} ({totalNorth >= 0 ? 'Lãi' : 'Lỗ'})
             </TableCell>
             <TableCell className="text-right border-r">
-              {totalCentral.toFixed(1)}
+              {totalCentral.toFixed(1)} ({totalCentral >= 0 ? 'Lãi' : 'Lỗ'})
             </TableCell>
             <TableCell className="text-right border-r">
-              {totalSouth.toFixed(1)}
+              {totalSouth.toFixed(1)} ({totalSouth >= 0 ? 'Lãi' : 'Lỗ'})
             </TableCell>
-            <TableCell className="text-right">{total.toFixed(1)}</TableCell>
+            <TableCell className="text-right">
+              {total.toFixed(1)} ({total >= 0 ? 'Lãi' : 'Lỗ'})
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

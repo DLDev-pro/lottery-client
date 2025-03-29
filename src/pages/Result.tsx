@@ -18,7 +18,6 @@ import {
   calculateStatistic,
   calculateStatisticMatched,
   calculateStatisticReceived,
-  createEmptyStatistic,
   totalPoints,
 } from '@/utils/string'
 import { DateContextType, RegionContextType } from '@/utils/types'
@@ -84,6 +83,7 @@ const Result = () => {
       })
 
       if (response) {
+        setDatas([])
         const data = response.data.data as IBetResultDetail[]
         if (
           response.data === null ||

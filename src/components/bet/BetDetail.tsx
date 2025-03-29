@@ -1,12 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DateContext } from '@/contexts/DateContext'
 import { ID_NEGATIVE } from '@/utils/constants'
-import {
-  IAgency,
-  IBetDetail,
-  IBetResultDetailInner,
-  IStatistic,
-} from '@/utils/interface'
+import { IAgency, IBetResultDetailInner, IStatistic } from '@/utils/interface'
 import { DateContextType } from '@/utils/types'
 import React, { useContext, useEffect } from 'react'
 import { MdEdit } from 'react-icons/md'
