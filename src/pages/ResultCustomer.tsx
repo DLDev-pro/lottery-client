@@ -103,10 +103,8 @@ const ResultCustomer = () => {
   const getData = async () => {
     try {
       const response = await globalApi.GetCustomerResult(
-        // startDate.toISOString().split('T')[0],
-        // endDate.toISOString().split('T')[0]
-        '2023-03-27',
-        '2025-03-28'
+        startDate.toISOString().split('T')[0],
+        endDate.toISOString().split('T')[0]
       )
       const { data } = response
 
@@ -276,6 +274,13 @@ const ResultCustomer = () => {
                     <p className="text-blue-500">{north?.total.toFixed(1)}</p>
                     <p className="text-green-500">{north?.actual.toFixed(1)}</p>
                     <p className="text-main">{north?.win.toFixed(1)}</p>
+                    <span className="text-xs">
+                      (
+                      {north?.actual || 0 - (north?.win || 0) >= 0
+                        ? 'Lãi'
+                        : 'Lỗ'}
+                      )
+                    </span>
                   </TableCell>
                   <TableCell className="text-right border-r font-bold">
                     <p className="text-blue-500">{central?.total.toFixed(1)}</p>
@@ -283,6 +288,13 @@ const ResultCustomer = () => {
                       {central?.actual.toFixed(1)}
                     </p>
                     <p className="text-main">{central?.win.toFixed(1)}</p>
+                    <span className="text-xs">
+                      (
+                      {central?.actual || 0 - (central?.win || 0) >= 0
+                        ? 'Lãi'
+                        : 'Lỗ'}
+                      )
+                    </span>
                   </TableCell>
 
                   <TableCell className="text-right border-r font-bold">
@@ -290,12 +302,22 @@ const ResultCustomer = () => {
                     <p className="text-blue-500">{south?.total.toFixed(1)}</p>
                     <p className="text-green-500">{south?.actual.toFixed(1)}</p>
                     <p className="text-main">{south?.win.toFixed(1)}</p>
+                    <span className="text-xs">
+                      (
+                      {south?.actual || 0 - (south?.win || 0) >= 0
+                        ? 'Lãi'
+                        : 'Lỗ'}
+                      )
+                    </span>
                   </TableCell>
 
                   <TableCell className="text-right font-bold">
                     <p className="text-blue-500">{totalRaw.toFixed(1)}</p>
                     <p className="text-green-500">{totalActual.toFixed(1)}</p>
                     <p className="text-main">{totalWin.toFixed(1)}</p>
+                    <span className="text-xs">
+                      ({totalActual || 0 - (totalWin || 0) >= 0 ? 'Lãi' : 'Lỗ'})
+                    </span>
                   </TableCell>
                 </TableRow>
               )
