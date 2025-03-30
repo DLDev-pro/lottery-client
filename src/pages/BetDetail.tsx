@@ -163,14 +163,13 @@ const BetDetail = () => {
             })
           }
 
-          //repalace -1 to data.data.id
-          // if (data.data.id) {
-          //   const path = location.pathname.split("/");
-          //   path[path.length - 1] = data.bet_id?.toString() || "";
-          //   const newPath =
-          //     path.join("/") + data.data.id + `?agency_id=${agency_id}`;
-          //   window.location.replace(newPath);
-          // }
+          if (data.data.id) {
+            const path = location.pathname.split('/')
+            path[path.length - 1] = data.bet_id?.toString() || ''
+            const newPath =
+              path.join('/') + data.data.id + `?agency_id=${agency_id}`
+            window.location.replace(newPath)
+          }
 
           // window.location.reload()
         }
@@ -310,7 +309,12 @@ const BetDetail = () => {
           checkProvince(bet?.province_acronym!, content.trim(), rules)
         )
       }
-      setRuleError(checkRule(rules, content.trim()))
+      const ruleError = checkRule(
+        rules,
+        content,
+        bet?.province_acronym.map((item) => item.acronym) || []
+      )
+      setRuleError(ruleError)
     }
   }, [content])
 

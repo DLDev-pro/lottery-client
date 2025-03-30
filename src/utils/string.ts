@@ -155,7 +155,6 @@ export const getProvincesFromBet = (bet: string, rules: IRuleAcronym[]) => {
 
   return [words[0], ...extractedProvinces]
 }
-
 export const extractRulesFromBet = (bet: string) => {
   const extractedRules: string[] = []
   const words = bet.split(/\s+/)
@@ -163,19 +162,44 @@ export const extractRulesFromBet = (bet: string) => {
   for (let i = 0; i < words.length - 1; i++) {
     const word = words[i].trim().toLowerCase()
     const nextWord = words[i + 1].trim().toLowerCase()
+
     if (/^\d+(\.\d+)?n$/.test(nextWord)) {
       extractedRules.push(word)
     }
+
+    if (/^\d+$/.test(nextWord) && !/^\d+$/.test(word)) {
+      if (word.length > 2) {
+        extractedRules.push(word)
+      }
+    }
   }
 
-  return extractedRules
+  // remove number+n from extractedRules
+  return extractedRules.filter((r) => {
+    const number = r.match(/^\d+(\.\d+)?n$/)
+    if (number) {
+      return false
+    }
+    return true
+  })
 }
 
-export const checkRule = (rule: IRuleAcronym[], bet: string) => {
-  const rules = new Set(rule.map((r) => r.acronym.toLowerCase().trim()))
+export const checkRule = (
+  rule: IRuleAcronym[],
+  bet: string,
+  provinces: string[]
+) => {
+  const validRules = new Set(rule.map((r) => r.acronym.toLowerCase().trim()))
+
   const extractedRules = extractRulesFromBet(bet)
-  return extractedRules.filter((r) => !rules.has(r))
+
+  //pass with case number like that 34.56.45
+  return extractedRules
+    .filter((r) => !validRules.has(r))
+    .filter((r) => !provinces.concat('2dai', '3dai', '4dai').includes(r))
+    .filter((r) => r.match(/^\d+(\.\d+)$/))
 }
+
 export const calculateStatistic = (
   rules: IRule[],
   statisticRaw?: IBetStatistic[]
