@@ -80,11 +80,11 @@ const FormInput = ({
   return (
     <div className="bg-white text-orange-500 text-center">
       <p className="shadow shadow-gray-400 w-full py-1">{region}</p>
-      <div className="sm:hidden shadow shadow-gray-400 w-full py-1 md:grid grid-cols-2">
+      <div className="md:grid hidden shadow shadow-gray-400 w-full py-1 grid-cols-2">
         <span>Hệ số thu</span>
         <span>Hệ số trả</span>
       </div>
-      <div className="sm:hidden shadow shadow-gray-400 w-full py-1 md:grid grid-cols-2">
+      <div className="md:grid hidden shadow shadow-gray-400 w-full py-1 grid-cols-2">
         <div>{generatePay(rule)}</div>
         <div>{generateRevenue(rule)}</div>
       </div>
