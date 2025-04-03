@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   return {
     plugins: [react(), tsconfigPaths()],
-    server: {},
+    server: { hmr: false, },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
